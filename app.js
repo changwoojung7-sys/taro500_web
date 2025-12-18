@@ -1,328 +1,324 @@
-const state = {
-  cards: [],
-  spread: 1,
-  useReversed: true,
-  drawMode: "auto", // auto | pick
-  picked: [],
-  question: "",
-  lastResult: [],
-};
+/* =========================================================
+   TARO 500 - app.js (FINAL)
+   - index.html 업그레이드 버전 대응
+   - 카드 드로우 / 모달 / 종합해설 / 제한 / PDF / 복사
+   ========================================================= */
 
-function $(sel){ return document.querySelector(sel); }
-function $$ (sel){ return Array.from(document.querySelectorAll(sel)); }
+/* ---------------------------
+   CONFIG
+---------------------------- */
+const DAILY_LIMIT = 3;
+const CARDS_JSON = "./assets/data/cards.json";
+const AI_ENDPOINT = "/.netlify/functions/tarot_ai";
 
-function toast(msg){
-  const t = $("#toast");
-  t.textContent = msg;
-  t.classList.add("on");
-  setTimeout(()=>t.classList.remove("on"), 2200);
+/* ---------------------------
+   STATE
+---------------------------- */
+let deck = [];
+let picked = [];
+let spreadCount = 3;
+let spreadName = "3장";
+let lastSummary = "";
+
+/* ---------------------------
+   UTIL : DAILY LIMIT
+---------------------------- */
+function getLimitState() {
+  const today = new Date().toISOString().slice(0, 10);
+  const raw = localStorage.getItem("taro_limit");
+  if (!raw) return { date: today, count: 0 };
+  const data = JSON.parse(raw);
+  if (data.date !== today) return { date: today, count: 0 };
+  return data;
 }
 
-function shuffle(array){
-  for(let i=array.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
+function saveLimitState(state) {
+  localStorage.setItem("taro_limit", JSON.stringify(state));
+}
+
+function canUseToday() {
+  const s = getLimitState();
+  return s.count < DAILY_LIMIT;
+}
+
+function increaseUse() {
+  const s = getLimitState();
+  s.count += 1;
+  saveLimitState(s);
+  updateUsageUI();
+}
+
+function updateUsageUI() {
+  const s = getLimitState();
+  const remain = Math.max(0, DAILY_LIMIT - s.count);
+  const usageText = document.getElementById("usageText");
+  const limitNote = document.getElementById("limitNote");
+  if (usageText) usageText.textContent = `오늘 남은 무료 리딩: ${remain}회`;
+  if (limitNote) limitNote.style.display = remain === 0 ? "block" : "none";
+}
+
+/* ---------------------------
+   UTIL
+---------------------------- */
+function qs(sel) { return document.querySelector(sel); }
+function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return array;
+  return a;
 }
 
-async function loadCards(){
-  const res = await fetch("cards.json");
-  const data = await res.json();
-  state.cards = data.cards;
+function getChecked(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
 }
 
-function setSpread(n){
-  state.spread = n;
-  $("#customWrap").style.display = (n==="custom") ? "block" : "none";
-  $$(".chip").forEach(c=>c.classList.remove("on"));
-  const el = document.querySelector(`.chip[data-spread="${n}"]`);
-  if(el) el.classList.add("on");
-  updateButtons();
+/* ---------------------------
+   INIT
+---------------------------- */
+async function init() {
+  const res = await fetch(CARDS_JSON);
+  deck = await res.json();
+
+  buildSpreadButtons();
+  bindEvents();
+  updateUsageUI();
 }
+document.addEventListener("DOMContentLoaded", init);
 
-function getSpreadCount(){
-  if(state.spread==="custom"){
-    return parseInt($("#customCount").value,10);
-  }
-  return parseInt(state.spread,10);
-}
+/* ---------------------------
+   SPREAD BUTTONS
+---------------------------- */
+function buildSpreadButtons() {
+  const row = document.getElementById("spreadRow");
+  if (!row) return;
 
-function updateButtons(){
-  const cnt = getSpreadCount();
-  $("#btnShuffle").disabled = state.cards.length===0;
-  $("#btnDraw").disabled = state.cards.length===0;
-  $("#pickHint").textContent = (state.drawMode==="pick")
-    ? `카드를 클릭해서 ${cnt}장 선택하세요.`
-    : `자동으로 ${cnt}장을 뽑습니다.`;
-}
+  const spreads = [
+    { count: 3, label: "3장", desc: "과거 · 현재 · 미래" },
+    { count: 5, label: "5장", desc: "상황 · 장애 · 조언" },
+    { count: 10, label: "켈틱 크로스", desc: "심층 리딩" }
+  ];
 
-function renderPlaceholders(){
-  const area = $("#spreadArea");
-  area.innerHTML = "";
-  const cnt = getSpreadCount();
-  for(let i=0;i<cnt;i++){
-    const w = document.createElement("div");
-    w.className = "cardWrap";
-    w.innerHTML = `
-      <div class="card" data-idx="${i}">
-        <div class="face back">
-          <img alt="back" src="assets/cards/back.svg"/>
-        </div>
-        <div class="face front">
-          <img alt="front" src="assets/cards/back.svg"/>
-          <div class="ribbon">선택 전</div>
-        </div>
-      </div>`;
-    w.addEventListener("click", ()=> onPick(i));
-    area.appendChild(w);
-  }
-}
-
-function onPick(slotIdx){
-  if(state.drawMode!=="pick") return;
-  const cnt = getSpreadCount();
-  if(state.picked.length>=cnt) return;
-
-  // pick a random remaining card
-  const remaining = state.cards.filter(c=>!state.picked.find(p=>p.id===c.id));
-  if(remaining.length===0) return;
-  const card = remaining[Math.floor(Math.random()*remaining.length)];
-  const reversed = state.useReversed ? (Math.random()<0.5) : false;
-  const pick = { ...card, reversed };
-  state.picked.push(pick);
-
-  // render this slot immediately
-  const slotCardEl = document.querySelector(`.card[data-idx="${slotIdx}"]`);
-  applyCardToElement(slotCardEl, pick);
-  slotCardEl.classList.add("flipped");
-
-  if(state.picked.length===cnt){
-    finalizeResult(state.picked);
-  }else{
-    toast(`${state.picked.length}/${cnt} 선택됨`);
-  }
-}
-
-function applyCardToElement(cardEl, pick){
-  const img = cardEl.querySelector(".front img");
-  img.src = pick.image;
-  const ribbon = cardEl.querySelector(".ribbon");
-  ribbon.textContent = `${pick.name_kr} · ${pick.reversed ? "역방향" : "정방향"}`;
-  // rotate image if reversed
-  img.style.transform = pick.reversed ? "rotate(180deg)" : "rotate(0deg)";
-}
-
-function buildMeaning(pick){
-  const d = pick.reversed ? pick.reversed : pick.upright;
-  const kws = d.keywords || [];
-  const meaning = d.meaning || "";
-  return { kws, meaning };
-}
-
-function renderDetail(pick){
-  const head = `${pick.name_kr} <span class="badge" style="margin-left:8px">${pick.reversed ? "역방향" : "정방향"}</span>`;
-  const en = `<div class="small">${pick.name_en} · ${pick.arcana==="Major" ? "메이저 아르카나" : `마이너(${pick.suit_kr})`}</div>`;
-  const {kws, meaning} = buildMeaning(pick);
-  const kwHtml = kws.map(k=>`<span class="kw">${k}</span>`).join("");
-  $("#detailTitle").innerHTML = head;
-  $("#detailMeta").innerHTML = en;
-  $("#detailMeaning").textContent = meaning;
-  $("#detailKws").innerHTML = kwHtml;
-
-  const q = state.question.trim();
-  $("#detailQuestion").textContent = q ? `질문: ${q}` : "질문이 비어있습니다. (선택)";
-  $("#detailAdvice").textContent = makeAdvice(pick, q);
-}
-
-function makeAdvice(pick, question){
-  // 아주 간단한 룰 기반 조언(정적 사이트에서도 동작)
-  const reversed = pick.reversed;
-  const arc = pick.arcana;
-  const base = reversed ? "무리하지 말고" : "한 발 더";
-  const focus = arc==="Major" ? "큰 방향" : "실행 계획";
-  if(question){
-    return `${base} 나아가되, 지금은 ${focus}을/를 질문(“${question}”)에 맞춰 정리하는 게 좋아요.`;
-  }
-  return `${base} 나아가되, 지금은 ${focus}을/를 먼저 정리해보세요.`;
-}
-
-function finalizeResult(result){
-  state.lastResult = result;
-  $("#resultCount").textContent = `${result.length}장 결과`;
-  // default show first card detail
-  if(result[0]) renderDetail(result[0]);
-
-  // click-to-focus
-  $$(".card").forEach((cEl, idx)=>{
-    cEl.addEventListener("click", ()=>{
-      const pick = state.lastResult[idx];
-      if(!pick) return;
-      cEl.classList.toggle("flipped");
-      renderDetail(pick);
-    });
+  row.innerHTML = "";
+  spreads.forEach(s => {
+    const btn = document.createElement("button");
+    btn.className = "btn chip";
+    btn.textContent = s.label;
+    btn.onclick = () => {
+      spreadCount = s.count;
+      spreadName = s.label;
+      document.getElementById("spreadTitle").textContent = `${s.label} 스프레드`;
+      document.getElementById("spreadDesc").textContent = s.desc;
+      qsa(".spreadRow .btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    };
+    row.appendChild(btn);
   });
 
-  toast("리딩이 준비됐어요 ✨");
+  row.querySelector(".btn")?.classList.add("active");
 }
 
-function localDraw(){
-  const cnt = getSpreadCount();
-  const deck = shuffle([...state.cards]);
-  const chosen = deck.slice(0,cnt).map(c=>{
-    const reversed = state.useReversed ? (Math.random()<0.5) : false;
-    return {...c, reversed};
+/* ---------------------------
+   EVENTS
+---------------------------- */
+function bindEvents() {
+  qs("#drawBtn")?.addEventListener("click", onDraw);
+  qs("#clearBtn")?.addEventListener("click", onClear);
+  qs("#shuffleBtn")?.addEventListener("click", onShuffle);
+  qs("#pdfBtn")?.addEventListener("click", onSavePDF);
+  qs("#copyBtn")?.addEventListener("click", onCopySummary);
+
+  qs("#modalClose")?.addEventListener("click", closeModal);
+  qs("#modal")?.addEventListener("click", (e) => {
+    if (e.target.id === "modal") closeModal();
   });
-  // render
-  const cardsEl = $$(".card");
-  chosen.forEach((pick, i)=>{
-    const el = cardsEl[i];
-    applyCardToElement(el, pick);
-    // auto flip sequentially
-    setTimeout(()=>el.classList.add("flipped"), 120*i);
-  });
-  finalizeResult(chosen);
 }
 
-async function apiDraw(){
-  // optional: if Flask backend exists
-  const cnt = getSpreadCount();
-  const res = await fetch(`/api/draw?count=${cnt}&reversed=${state.useReversed ? "1":"0"}&q=${encodeURIComponent(state.question||"")}`);
-  if(!res.ok) throw new Error("API draw failed");
-  const data = await res.json();
-  return data.result;
-}
-
-async function doDraw(){
-  state.question = $("#question").value || "";
-  state.picked = [];
-  renderPlaceholders();
-
-  const cnt = getSpreadCount();
-  if(state.drawMode==="pick"){
-    toast(`카드를 선택해 ${cnt}장을 완성하세요`);
+/* ---------------------------
+   ACTIONS
+---------------------------- */
+async function onDraw() {
+  if (!canUseToday()) {
+    updateUsageUI();
     return;
   }
 
-  // Try API first if running on Flask, otherwise fall back to local
-  try{
-    const result = await apiDraw();
-    // render result
-    const cardsEl = $$(".card");
-    result.forEach((pick, i)=>{
-      const el = cardsEl[i];
-      applyCardToElement(el, pick);
-      setTimeout(()=>el.classList.add("flipped"), 120*i);
+  const revOn = qs("#revToggle")?.checked ?? true;
+  const category = getChecked("category") || "general";
+  const mode = getChecked("mode") || "auto";
+  const question = qs("#question")?.value || "";
+
+  const d = shuffle(deck);
+  picked = d.slice(0, spreadCount).map((c, i) => ({
+    ...c,
+    pos: i + 1,
+    is_reversed: revOn ? Math.random() < 0.5 : false
+  }));
+
+  renderGrid();
+  renderMeta(category, revOn);
+
+  increaseUse();
+
+  await renderSummary({ mode, category, question });
+}
+
+function onClear() {
+  picked = [];
+  qs("#grid").innerHTML = "";
+  qs("#summary").innerHTML = "아직 카드가 없어요. ✨";
+  qs("#summary").classList.add("empty");
+  qs("#metaRow").style.display = "none";
+}
+
+function onShuffle() {
+  deck = shuffle(deck);
+}
+
+/* ---------------------------
+   GRID / MODAL
+---------------------------- */
+function renderGrid() {
+  const grid = qs("#grid");
+  grid.innerHTML = "";
+
+  picked.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "cardItem";
+    card.innerHTML = `
+      <img src="${c.image}" class="${c.is_reversed ? "rev" : ""}" />
+      <div class="cardLabel">${c.pos}. ${c.name_kr}</div>
+    `;
+    card.onclick = () => openModal(c);
+    grid.appendChild(card);
+  });
+}
+
+function openModal(c) {
+  qs("#modalImg").src = c.image;
+  qs("#modalPos").textContent = `Position ${c.pos}`;
+  qs("#modalTitle").textContent = `${c.name_kr} (${c.is_reversed ? "역" : "정"})`;
+
+  const chips = qs("#modalChips");
+  chips.innerHTML = "";
+  const keys = c.is_reversed ? c.reversed.keywords : c.upright.keywords;
+  keys.forEach(k => {
+    const span = document.createElement("span");
+    span.className = "chip";
+    span.textContent = k;
+    chips.appendChild(span);
+  });
+
+  qs("#modalText").textContent =
+    c.is_reversed ? c.reversed.meaning : c.upright.meaning;
+
+  qs("#modal").classList.remove("hidden");
+}
+
+function closeModal() {
+  qs("#modal").classList.add("hidden");
+}
+
+/* ---------------------------
+   SUMMARY
+---------------------------- */
+async function renderSummary({ mode, category, question }) {
+  const box = qs("#summary");
+  box.classList.remove("empty");
+  box.textContent = "해설을 생성 중입니다…";
+
+  const usedMode = (mode === "auto") ? "자동" : (mode === "local" ? "로컬" : "OpenAI");
+  qs("#modeUsed").textContent = `모드: ${usedMode}`;
+
+  // LOCAL SUMMARY
+  if (mode === "local" || mode === "auto") {
+    lastSummary = localSummary(category, question);
+    box.textContent = lastSummary;
+    if (mode === "local") return;
+  }
+
+  // OPENAI
+  try {
+    const res = await fetch(AI_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cards: picked,
+        question,
+        category
+      })
     });
-    finalizeResult(result);
-  }catch(e){
-    localDraw();
+    const data = await res.json();
+    if (data?.result) {
+      lastSummary = data.result;
+      box.textContent = lastSummary;
+      qs("#modeUsed").textContent = "모드: OpenAI";
+    }
+  } catch (e) {
+    // fallback
+    box.textContent = lastSummary + "\n\n(OpenAI 연결 실패 – 로컬 해설 표시)";
   }
 }
 
-function doShuffle(){
-  renderPlaceholders();
-  toast("카드를 섞는 중…");
-  // small visual shake
-  const d = $("#deck");
-  d.animate([{transform:"rotate(-6deg) translateY(0)"},{transform:"rotate(-10deg) translateY(2px)"},{transform:"rotate(-6deg) translateY(0)"}], {duration:420});
+function localSummary(category, question) {
+  const majorCount = picked.filter(c => c.arcana === "Major").length;
+  const revCount = picked.filter(c => c.is_reversed).length;
+
+  return `질문: ${question || "미입력"}
+
+이번 리딩에서는 전체 ${picked.length}장 중 메이저 카드가 ${majorCount}장 등장했습니다.
+이는 상황의 중요도가 높다는 신호입니다.
+
+역방향 카드 ${revCount}장은 현재 내부적인 갈등이나 조정이 필요함을 나타냅니다.
+
+카테고리(${category}) 관점에서 볼 때,
+지금은 성급한 결정보다는 흐름을 관찰하며 균형을 맞추는 것이 유리합니다.
+`;
 }
 
-function bindUI(){
-  $$(".chip").forEach(ch=>{
-    ch.addEventListener("click", ()=> setSpread(ch.dataset.spread));
-  });
-  $("#customCount").addEventListener("input", ()=>{
-    $("#customLabel").textContent = $("#customCount").value;
-    renderPlaceholders();
-    updateButtons();
-  });
-
-  $("#useReversed").addEventListener("change", e=>{
-    state.useReversed = e.target.checked;
-    updateButtons();
-  });
-
-  $$("input[name='drawMode']").forEach(r=>{
-    r.addEventListener("change", e=>{
-      state.drawMode = e.target.value;
-      state.picked = [];
-      renderPlaceholders();
-      updateButtons();
-    });
-  });
-
-  $("#btnShuffle").addEventListener("click", doShuffle);
-  $("#btnDraw").addEventListener("click", doDraw);
-
-  // nav simple
-  $("#navHome").addEventListener("click", ()=> showSection("home"));
-  $("#navLibrary").addEventListener("click", ()=> showSection("library"));
-  $("#navGuide").addEventListener("click", ()=> showSection("guide"));
+/* ---------------------------
+   META / PDF / COPY
+---------------------------- */
+function renderMeta(category, revOn) {
+  qs("#metaRow").style.display = "flex";
+  qs("#metaCategory").textContent = category;
+  qs("#metaSpread").textContent = spreadName;
+  qs("#metaReversed").textContent = revOn ? "역방향 포함" : "정방향만";
 }
 
-function showSection(name){
-  $$("#nav button").forEach(b=>b.classList.remove("active"));
-  $(`#nav${name[0].toUpperCase()+name.slice(1)}`).classList.add("active");
+function onSavePDF() {
+  if (!lastSummary) return;
 
-  $$(".section").forEach(s=>s.style.display="none");
-  $(`#sec-${name}`).style.display="block";
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
-  if(name==="library") renderLibrary();
-}
+  let y = 20;
+  doc.setFontSize(14);
+  doc.text("Tarot Reading Result", 10, y);
+  y += 10;
 
-function renderLibrary(){
-  const wrap = $("#libWrap");
-  const q = ($("#libSearch").value||"").trim();
-  const filter = ($("#libFilter").value||"all");
-  let list = state.cards;
-
-  if(filter==="major") list = list.filter(c=>c.arcana==="Major");
-  if(filter==="minor") list = list.filter(c=>c.arcana==="Minor");
-  if(filter==="wands") list = list.filter(c=>c.suit_en==="Wands");
-  if(filter==="cups") list = list.filter(c=>c.suit_en==="Cups");
-  if(filter==="swords") list = list.filter(c=>c.suit_en==="Swords");
-  if(filter==="pentacles") list = list.filter(c=>c.suit_en==="Pentacles");
-
-  if(q){
-    const qq = q.toLowerCase();
-    list = list.filter(c=> (c.name_en||"").toLowerCase().includes(qq) || (c.name_kr||"").includes(q));
-  }
-
-  wrap.innerHTML = list.slice(0,120).map(c=>`
-    <div class="tog" style="gap:12px; cursor:pointer" data-id="${c.id}">
-      <img src="${c.image}" alt="${c.name_en}" style="width:54px; height:90px; object-fit:cover; border-radius:12px; border:1px solid rgba(226,232,240,.12); background:rgba(2,6,23,.25)" onerror="this.src='assets/cards/back.svg'"/>
-      <div style="display:flex; flex-direction:column; gap:2px">
-        <div style="font-weight:800">${c.name_kr}</div>
-        <div class="small">${c.name_en} · ${c.arcana==="Major" ? "Major" : c.suit_en}</div>
-      </div>
-    </div>
-  `).join("");
-
-  wrap.querySelectorAll("[data-id]").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      const id = parseInt(el.dataset.id,10);
-      const card = state.cards.find(x=>x.id===id);
-      if(!card) return;
-      const pick = {...card, reversed:false};
-      renderDetail(pick);
-      toast("도감 카드 표시");
-    });
+  doc.setFontSize(11);
+  picked.forEach(c => {
+    doc.text(
+      `${c.pos}. ${c.name_kr} (${c.is_reversed ? "역" : "정"})`,
+      10, y
+    );
+    y += 7;
   });
+
+  y += 5;
+  doc.addPage();
+  doc.text(lastSummary, 10, 20, { maxWidth: 180 });
+
+  doc.save("tarot_result.pdf");
 }
 
-async function init(){
-  await loadCards();
-  bindUI();
-  setSpread("1");
-  renderPlaceholders();
-  showSection("home");
-
-  $("#libSearch").addEventListener("input", ()=>renderLibrary());
-  $("#libFilter").addEventListener("change", ()=>renderLibrary());
-
-  updateButtons();
-  $("#deckCount").textContent = `${state.cards.length}장 덱 로드됨`;
+function onCopySummary() {
+  if (!lastSummary) return;
+  navigator.clipboard.writeText(lastSummary);
+  alert("종합해설이 복사되었습니다.");
 }
-
-document.addEventListener("DOMContentLoaded", init);
