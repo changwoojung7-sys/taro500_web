@@ -10,6 +10,16 @@ let lastDraw=null;
 const $ = (s)=>document.querySelector(s);
 function esc(s){ return (s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
 
+const spreads = [
+  { count: 3, label: "과거·현재·미래", desc: "시간의 흐름" },
+  { count: 5, label: "5장 리딩", desc: "상황·장애·조언" },
+  { count: 10, label: "켈틱 크로스", desc: "심층 분석" }
+];
+
+btn.innerHTML = `<b>${s.label}</b><span>${s.desc}</span>`;
+
+grid.className = spreadCount === 10 ? "grid celtic" : "grid";
+
 async function loadCards(){
   const res = await fetch("./data/cards.json");
   CARDS = await res.json();

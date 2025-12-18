@@ -162,25 +162,45 @@ body{
     0 0 20px var(--glow2);
 }
 
-/* ===== spread ===== */
+/* ===== Spread Selector (Upgrade) ===== */
 .spreadRow{
-  display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+  margin-top:12px;
 }
+
 .spreadRow .btn{
-  flex:1 1 100px;
-  padding:10px 12px;
-  border-radius:14px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:14px;
+  border-radius:16px;
   border:1px solid var(--stroke);
-  background: rgba(255,255,255,.04);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.2));
   color: var(--muted);
-  cursor:pointer;
+  text-align:left;
+  min-height:88px;
 }
+
+.spreadRow .btn b{
+  color: var(--fg);
+  font-size:14px;
+}
+
+.spreadRow .btn span{
+  font-size:12px;
+  color: var(--muted);
+}
+
 .spreadRow .btn.active{
   color: var(--fg);
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.12) inset,
-    0 0 24px var(--glow);
+    0 0 0 1px rgba(255,255,255,.14) inset,
+    0 0 28px var(--glow);
+  transform: translateY(-1px);
 }
+
 
 /* ===== mode ===== */
 .modeRow{
@@ -241,18 +261,27 @@ body{
 }
 .stageHead h2{margin:0; font-size:16px}
 
-/* ===== grid ===== */
+/* ===== Card Grid Fix ===== */
 .grid{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.cardItem{
+  width:180px;
+  max-width:42vw;
+}
+
+.grid.celtic{
   display:grid;
-  grid-template-columns: repeat(5, minmax(140px,1fr));
-  gap:14px;
+  grid-template-columns: repeat(4, 140px);
+  grid-template-rows: repeat(4, auto);
+  gap:12px;
+  justify-content:center;
 }
-@media (max-width:1100px){
-  .grid{grid-template-columns: repeat(3, minmax(140px,1fr));}
-}
-@media (max-width:560px){
-  .grid{grid-template-columns: repeat(2, minmax(140px,1fr));}
-}
+
 
 /* ===== card ===== */
 .cardItem{
@@ -359,6 +388,48 @@ body{
   font-size:12px;
 }
 .modalText{line-height:1.6}
+
+/* ================= CELTIC CROSS ================= */
+.grid.celtic{
+  display:grid;
+  grid-template-columns: repeat(4, 160px);
+  grid-template-rows: repeat(4, auto);
+  gap:14px;
+  justify-content:center;
+  align-items:center;
+}
+
+/* 중앙 십자 (1~6) */
+.grid.celtic .pos-1{ grid-column:2; grid-row:2; } /* 현재 */
+.grid.celtic .pos-2{ grid-column:2; grid-row:2; transform: rotate(90deg);} /* 장애 */
+.grid.celtic .pos-3{ grid-column:2; grid-row:3; } /* 근본 */
+.grid.celtic .pos-4{ grid-column:1; grid-row:2; } /* 과거 */
+.grid.celtic .pos-5{ grid-column:2; grid-row:1; } /* 목표 */
+.grid.celtic .pos-6{ grid-column:3; grid-row:2; } /* 가까운 미래 */
+
+/* 우측 기둥 (7~10) */
+.grid.celtic .pos-7{ grid-column:4; grid-row:1; }
+.grid.celtic .pos-8{ grid-column:4; grid-row:2; }
+.grid.celtic .pos-9{ grid-column:4; grid-row:3; }
+.grid.celtic .pos-10{ grid-column:4; grid-row:4; }
+
+/* 켈틱 크로스 카드 크기 조정 */
+.grid.celtic .cardItem{
+  width:160px;
+}
+
+/* 모바일 대응 */
+@media (max-width: 720px){
+  .grid.celtic{
+    grid-template-columns: repeat(2, 150px);
+    grid-template-rows: auto;
+  }
+  .grid.celtic .cardItem{
+    grid-column:auto !important;
+    grid-row:auto !important;
+    width:150px;
+  }
+}
 
 /* ================= FOOTER ================= */
 .footer{
