@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tarot 500</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="./css/style.css"/>
+</head>
+<body>
+  <div class="bg"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🔮</div>
+      <div>
+        <div class="title">TARO 500</div>
+        <div class="subtitle">Rider–Waite Remaster • 78 Cards</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <label class="toggle">
+        <input id="revToggle" type="checkbox" checked />
+        <span class="pill">역방향 포함</span>
+      </label>
+      <button class="btn ghost" id="shuffleBtn" title="새로 셔플">셔플</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <div class="panelHead">
+        <h2>질문</h2>
+        <div class="hint">구체적일수록 종합해설이 좋아져요.</div>
+      </div>
+
+      <div class="formRow">
+        <input id="question" class="input" placeholder="예) 3개월 안에 이직이 가능할까요?" maxlength="120"/>
+      </div>
+
+      <div class="panelHead" style="margin-top:14px">
+        <h2>스프레드 선택</h2>
+        <div class="hint">3장/5장/켈틱 크로스(10장)</div>
+      </div>
+
+      <div class="spreadRow" id="spreadRow"></div>
+
+      <div class="panelHead" style="margin-top:14px">
+        <h2>종합해설</h2>
+        <div class="hint">로컬(무료) 또는 OpenAI(키 있으면)로 더 깊게</div>
+      </div>
+
+      <div class="modeRow">
+        <label class="radio">
+          <input type="radio" name="mode" value="auto" checked>
+          <span>자동</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="local">
+          <span>로컬</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="openai">
+          <span>OpenAI</span>
+        </label>
+      </div>
+
+      <div class="ctaRow">
+        <button id="drawBtn" class="btn primary">카드 뽑기</button>
+        <button id="clearBtn" class="btn">초기화</button>
+      </div>
+
+      <div class="note">
+        <b>Tip.</b> OpenAI 모드를 쓰려면 서버에서 환경변수 <code>OPENAI_API_KEY</code>를 설정하세요.
+      </div>
+    </section>
+
+    <section class="stage">
+      <div class="stageHead">
+        <h2 id="spreadTitle">스프레드를 선택하고 카드를 뽑아보세요</h2>
+        <div id="spreadDesc" class="hint"></div>
+      </div>
+
+      <div id="grid" class="grid"></div>
+
+      <section class="result">
+        <div class="resultHead">
+          <h2>종합해설</h2>
+          <div class="hint" id="modeUsed"></div>
+        </div>
+        <div id="summary" class="summary empty">
+          아직 카드가 없어요. <span class="spark">✨</span>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" aria-hidden="true">
+    <div class="modalCard">
+      <button class="modalClose" id="modalClose">×</button>
+      <div class="modalBody">
+        <div class="modalLeft">
+          <img id="modalImg" alt="card"/>
+        </div>
+        <div class="modalRight">
+          <div class="kicker" id="modalPos"></div>
+          <h3 id="modalTitle"></h3>
+          <div class="chips" id="modalChips"></div>
+          <p class="modalText" id="modalText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
