@@ -10,16 +10,6 @@ let lastDraw=null;
 const $ = (s)=>document.querySelector(s);
 function esc(s){ return (s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
 
-const spreads = [
-  { count: 3, label: "과거·현재·미래", desc: "시간의 흐름" },
-  { count: 5, label: "5장 리딩", desc: "상황·장애·조언" },
-  { count: 10, label: "켈틱 크로스", desc: "심층 분석" }
-];
-
-btn.innerHTML = `<b>${s.label}</b><span>${s.desc}</span>`;
-
-grid.className = spreadCount === 10 ? "grid celtic" : "grid";
-
 async function loadCards(){
   const res = await fetch("./data/cards.json");
   CARDS = await res.json();
@@ -31,7 +21,7 @@ function renderSpreads(){
   ["3","5","10"].forEach(k=>{
     const s = SPREADS[k];
     const btn=document.createElement("button");
-    btn.className="spreadBtn";
+    btn.className="btn spread";
     btn.dataset.key=k;
     btn.innerHTML=`<b>${esc(s.name)}</b><div class="hint">${s.count}장 • ${s.positions.map(p=>p.label).slice(0,3).join(" / ")}${s.count>3?" …":""}</div>`;
     btn.onclick=()=>setSpread(k);
@@ -42,10 +32,17 @@ function renderSpreads(){
 
 function setSpread(k){
   selectedSpread=k;
-  document.querySelectorAll(".spreadBtn").forEach(b=>b.classList.toggle("active", b.dataset.key===k));
+
+  document.querySelectorAll(".spread")
+    .forEach(b=>b.classList.toggle("active", b.dataset.key===k));
+
   const s=SPREADS[k];
   $("#spreadTitle").textContent=s.name;
-  $("#spreadDesc").textContent=s.positions.map((p,i)=>`${i+1}.${p.label}`).join("  ·  ");
+  $("#spreadDesc").textContent=
+    s.positions.map((p,i)=>`${i+1}.${p.label}`).join("  ·  ");
+
+  const grid=$("#grid");
+  grid.className = k==="10" ? "grid celtic" : "grid";
 }
 
 function localSummary(question, spreadName, cards){
@@ -135,7 +132,10 @@ window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
 
 $("#drawBtn")?.addEventListener("click", draw);
 $("#clearBtn")?.addEventListener("click", ()=>{ $("#grid").innerHTML=""; $("#summary").textContent="아직 카드가 없어요. ✨"; $("#summary").classList.add("empty"); $("#modeUsed").textContent=""; });
-$("#shuffleBtn")?.addEventListener("click", draw);
+$("#shuffleBtn")?.addEventListener("click", ()=>{
+   CARDS.sort(()=>Math.random()-0.5);
+   alert("카드 덱이 섞였습니다!");});
+
 
 (async ()=>{
   await loadCards();

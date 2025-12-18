@@ -261,27 +261,22 @@ body{
 }
 .stageHead h2{margin:0; font-size:16px}
 
-/* ===== Card Grid Fix ===== */
+/* ===== GRID FIX ===== */
 .grid{
   display:flex;
+  flex-wrap:wrap;
   justify-content:center;
   gap:18px;
-  flex-wrap:wrap;
 }
 
-.cardItem{
-  width:180px;
-  max-width:42vw;
-}
-
+/* 켈틱 크로스 */
 .grid.celtic{
   display:grid;
-  grid-template-columns: repeat(4, 140px);
+  grid-template-columns: repeat(4, 160px);
   grid-template-rows: repeat(4, auto);
-  gap:12px;
+  gap:14px;
   justify-content:center;
 }
-
 
 /* ===== card ===== */
 .cardItem{

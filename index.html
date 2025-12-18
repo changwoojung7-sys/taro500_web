@@ -4,14 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tarot 500</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="./css/style.css"/>
-
-  <!-- PDF 저장용 (정적 배포에서도 동작) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
-
 <body>
   <div class="bg"></div>
 
@@ -23,169 +17,92 @@
         <div class="subtitle">Rider–Waite Remaster • 78 Cards</div>
       </div>
     </div>
-
     <div class="actions">
-      <!-- ✅ 오늘 남은 횟수 표시 (JS가 텍스트만 채움) -->
-      <div class="usage" title="무료 사용량">
-        <span class="dot"></span>
-        <span id="usageText">오늘 남은 무료 리딩: 3회</span>
-      </div>
-
       <label class="toggle">
         <input id="revToggle" type="checkbox" checked />
         <span class="pill">역방향 포함</span>
       </label>
-
-      <button class="btn ghost" id="shuffleBtn" title="새로 셔플">셔플</button>
+      <button id="shuffleBtn" class="btn ghost">셔플</button>
     </div>
   </header>
 
   <main class="container">
-    <!-- ================= LEFT PANEL ================= -->
+    <!-- LEFT -->
     <section class="panel">
       <div class="panelHead">
         <h2>질문</h2>
-        <div class="hint">구체적일수록 종합해설이 좋아져요.</div>
+        <div class="hint">구체적일수록 종합해설이 좋아져요</div>
       </div>
+      <input id="question" class="input"
+        placeholder="이번에 퇴사하는데 내년 2월엔 난 어떻게 될까?" />
 
-      <div class="formRow">
-        <input id="question" class="input" placeholder="예) 3개월 안에 이직이 가능할까요?" maxlength="120"/>
-      </div>
-
-      <!-- ✅ 질문 유형(연애/직업/금전/종합) 분기 UI -->
       <div class="panelHead" style="margin-top:14px">
         <h2>질문 유형</h2>
-        <div class="hint">종합해설이 더 정확해져요</div>
       </div>
-
-      <div class="categoryRow" id="categoryRow">
+      <div class="categoryRow">
         <label class="chipRadio">
-          <input type="radio" name="category" value="general" checked>
-          <span>종합</span>
+          <input type="radio" name="category" checked><span>종합</span>
         </label>
         <label class="chipRadio">
-          <input type="radio" name="category" value="love">
-          <span>연애</span>
+          <input type="radio" name="category"><span>연애</span>
         </label>
         <label class="chipRadio">
-          <input type="radio" name="category" value="job">
-          <span>직업</span>
+          <input type="radio" name="category"><span>직업</span>
         </label>
         <label class="chipRadio">
-          <input type="radio" name="category" value="money">
-          <span>금전</span>
+          <input type="radio" name="category"><span>금전</span>
         </label>
       </div>
 
       <div class="panelHead" style="margin-top:14px">
         <h2>스프레드 선택</h2>
-        <div class="hint">3장/5장/켈틱 크로스(10장)</div>
       </div>
-
-      <div class="spreadRow" id="spreadRow"></div>
-
-      <div class="panelHead" style="margin-top:14px">
-        <h2>종합해설</h2>
-        <div class="hint">로컬(무료) 또는 OpenAI(키 있으면)로 더 깊게</div>
-      </div>
-
-      <div class="modeRow" role="radiogroup" aria-label="해설 모드">
-        <label class="radio">
-          <input type="radio" name="mode" value="auto" checked>
-          <span>자동</span>
-        </label>
-        <label class="radio">
-          <input type="radio" name="mode" value="local">
-          <span>로컬</span>
-        </label>
-        <label class="radio">
-          <input type="radio" name="mode" value="openai">
-          <span>OpenAI</span>
-        </label>
-      </div>
+      <div id="spreadRow" class="spreadRow"></div>
 
       <div class="ctaRow">
         <button id="drawBtn" class="btn primary">카드 뽑기</button>
         <button id="clearBtn" class="btn">초기화</button>
       </div>
-
-      <!-- ✅ PDF 저장 버튼 추가 -->
-      <div class="ctaRow" style="margin-top:10px">
-        <button id="pdfBtn" class="btn ghost" title="결과를 PDF로 저장">📄 결과 PDF 저장</button>
-        <button id="copyBtn" class="btn ghost" title="종합해설을 복사">📋 해설 복사</button>
-      </div>
-
-      <!-- ✅ OpenAI 안내 + Netlify 배포 안내 -->
-      <div class="note">
-        <b>Tip.</b>
-        OpenAI 모드는 서버에서 환경변수 <code>OPENAI_API_KEY</code>가 설정되어야 동작합니다.
-        (Netlify 배포 시 Environment Variables에 등록)
-      </div>
-
-      <!-- ✅ 사용량 제한 안내 -->
-      <div class="note warn" id="limitNote" style="display:none;">
-        오늘 무료 사용 3회를 모두 사용했습니다. 내일 다시 이용할 수 있어요.
-      </div>
     </section>
 
-    <!-- ================= RIGHT STAGE ================= -->
+    <!-- RIGHT -->
     <section class="stage">
       <div class="stageHead">
-        <h2 id="spreadTitle">스프레드를 선택하고 카드를 뽑아보세요</h2>
+        <h2 id="spreadTitle"></h2>
         <div id="spreadDesc" class="hint"></div>
       </div>
 
-      <!-- ✅ 켈틱 크로스일 때 레이아웃 변경을 위해 wrapper 추가 -->
-      <div id="gridWrap" class="gridWrap">
-        <div id="grid" class="grid"></div>
-      </div>
+      <div id="grid" class="grid"></div>
 
       <section class="result">
         <div class="resultHead">
           <h2>종합해설</h2>
-          <div class="hint" id="modeUsed"></div>
+          <div id="modeUsed" class="hint"></div>
         </div>
-
         <div id="summary" class="summary empty">
-          아직 카드가 없어요. <span class="spark">✨</span>
-        </div>
-
-        <!-- ✅ 작은 메타 정보 -->
-        <div class="metaRow" id="metaRow" style="display:none;">
-          <span class="metaPill" id="metaCategory">종합</span>
-          <span class="metaPill" id="metaSpread">3장</span>
-          <span class="metaPill" id="metaReversed">역방향 포함</span>
+          아직 카드가 없어요 ✨
         </div>
       </section>
     </section>
   </main>
 
-  <!-- ================= MODAL ================= -->
-  <div id="modal" class="modal hidden" aria-hidden="true">
-    <div class="modalCard" role="dialog" aria-modal="true" aria-label="카드 상세">
-      <button class="modalClose" id="modalClose" aria-label="닫기">×</button>
+  <!-- MODAL -->
+  <div id="modal" class="modal hidden">
+    <div class="modalCard">
+      <button id="modalClose" class="modalClose">×</button>
       <div class="modalBody">
         <div class="modalLeft">
-          <img id="modalImg" alt="card"/>
+          <img id="modalImg"/>
         </div>
         <div class="modalRight">
-          <div class="kicker" id="modalPos"></div>
+          <div id="modalPos" class="kicker"></div>
           <h3 id="modalTitle"></h3>
-          <div class="chips" id="modalChips"></div>
-          <p class="modalText" id="modalText"></p>
+          <div id="modalChips" class="chips"></div>
+          <p id="modalText" class="modalText"></p>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="footer">
-    <div class="footerInner">
-      <span>© TARO 500</span>
-      <span class="sep">•</span>
-      <span>Made for Netlify deploy</span>
-    </div>
-  </footer>
 
   <script src="./js/app.js"></script>
 </body>
