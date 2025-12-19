@@ -443,8 +443,11 @@ async function runOpenAIReadingIfNeeded() {
       summaryEl.textContent = baseSummaryText + "\n\n(OpenAI 리딩 중...)";
     }
 
-    // ✅ Functions 기본 경로
-    const endpoint = "/.functions/tarot_ai";
+    // ✅ Netlify 전용  Functions 기본 경로
+    //const endpoint = "/.functions/tarot_ai";
+
+    // ✅ Cloudflare Pages 전용
+    const endpoint = "/api/tarot_ai";
 
     const payload = {
       mode: "openai",
