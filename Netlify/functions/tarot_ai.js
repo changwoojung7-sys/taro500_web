@@ -1,67 +1,155 @@
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+/**
+ * Netlify Function: /api/tarot_ai (또는 /.netlify/functions/tarot_ai)
+ * Request body (JSON):
+ * {
+ *   "summaryText": "....",
+ *   "cards": [{ name_kr, name_en, is_reversed, position_label, upright, reversed, ... }]
+ * }
+ */
 
-export const handler = async (event) => {
-  try {
-    const { cards, question } = JSON.parse(event.body);
+function createOpenAIClient() {
+  const apiKey =
+    process.env.OPENAI_API_KEY ||
+    globalThis?.OPENAI_API_KEY || // (일부 런타임 대비)
+    "";
 
-    const cardText = cards.map(c =>
-      `${c.name_kr} (${c.is_reversed ? "역" : "정"}) : ${
-        c.is_reversed ? c.reversed.meaning : c.upright.meaning
-      }`
-    ).join("\n");
+  if (!apiKey) throw new Error("OPENAI_API_KEY is not defined");
+  return new OpenAI({ apiKey });
+}
 
-   const prompt = `
-너는 10년 이상 경력의 전문 타로 리더다.
-말투는 차분하고 신뢰감 있게, 하지만 따뜻해야 한다.
+function buildAIPrompt(drawSummary, cards) {
+  const list = (cards || [])
+    .map(
+      (c, i) =>
+        `${i + 1}. ${c?.name_kr || ""} (${c?.is_reversed ? "역방향" : "정방향"}) - ${
+          c?.position_label || ""
+        }`
+    )
+    .join("\n");
 
-[질문]
-${question}
+  return `
+당신은 숙련된 타로 리더입니다.
+아래는 실제 카드 리딩 결과입니다.
 
-[스프레드]
-${spreadName}
+[리딩 요약]
+${drawSummary || ""}
 
-[카드 결과]
-${cardText}
+[카드 목록]
+${list}
 
-아래 구조를 반드시 지켜서 해설해라:
+요구사항:
+1) 각 카드마다 타로 리더 말투로 3~5문장 코멘트를 작성하세요.
+2) 카드 위치와 정/역방향 의미를 반드시 반영하세요.
+3) 마지막에는 전체 흐름을 종합한 코멘트를 작성하세요.
+4) 반드시 JSON 형식으로만 응답하세요. (설명/마크다운 금지)
 
-1. 전체 흐름 요약
-- 카드들이 공통적으로 말해주는 핵심 메시지
+응답 형식:
+{
+  "card_comments": [
+    { "index": 0, "title": "...", "message": "..." }
+  ],
+  "overall_comment": {
+    "summary": "...",
+    "advice": "...",
+    "closing": "..."
+  }
+}
+`.trim();
+}
 
-2. 현재 상황 해석
-- 질문자가 처한 심리/환경
+function json(statusCode, obj) {
+  return {
+    statusCode,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      // 필요하면 CORS 열기 (같은 도메인이면 없어도 됨)
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+    },
+    body: JSON.stringify(obj),
+  };
+}
 
-3. 앞으로의 가능성
-- 긍정적 전개와 주의할 전개를 모두 언급
-
-4. 실천 조언
-- 지금 당장 할 수 있는 행동 2~3가지
-
-※ 단순 나열 금지, 카드 간 연결을 설명할 것
-※ 추상적 문장 금지, 현실적인 표현 사용
-`;
-
-
-    const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-5.2",
-      input: prompt
-    });
-
+export async function handler(event) {
+  // Preflight
+  if (event.httpMethod === "OPTIONS") {
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        result: response.output_text
-      })
-    };
-
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      statusCode: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
+      body: "",
     };
   }
-};
+
+  if (event.httpMethod !== "POST") {
+    return json(405, { error: "Method Not Allowed. Use POST." });
+  }
+
+  let payload;
+  try {
+    payload = event.body ? JSON.parse(event.body) : {};
+  } catch {
+    return json(400, { error: "Invalid JSON body" });
+  }
+
+  const summaryText = payload.summaryText || payload.summary || "";
+  const cards = Array.isArray(payload.cards) ? payload.cards : [];
+
+  if (!summaryText || cards.length === 0) {
+    return json(400, { error: "summaryText and cards are required" });
+  }
+
+  let client;
+  try {
+    client = createOpenAIClient();
+  } catch (err) {
+    return json(500, {
+      error: "OpenAI API Key not configured",
+      detail: err?.message || String(err),
+    });
+  }
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.8,
+      messages: [
+        { role: "system", content: "You are a professional tarot reader." },
+        { role: "user", content: buildAIPrompt(summaryText, cards) },
+      ],
+    });
+
+    const raw = completion?.choices?.[0]?.message?.content || "";
+
+    // 모델이 JSON 앞뒤로 글을 섞는 경우 대비: 첫 { ~ 마지막 }만 추출
+    const first = raw.indexOf("{");
+    const last = raw.lastIndexOf("}");
+    const jsonText = first >= 0 && last > first ? raw.slice(first, last + 1) : raw;
+
+    let result;
+    try {
+      result = JSON.parse(jsonText);
+    } catch (e) {
+      return json(500, {
+        error: "AI 응답 파싱 실패",
+        raw: raw.slice(0, 2000), // 디버깅용 (너무 길면 잘라줌)
+      });
+    }
+
+    return json(200, {
+      card_comments: Array.isArray(result.card_comments) ? result.card_comments : [],
+      overall_comment: result.overall_comment || {},
+    });
+  } catch (e) {
+    return json(500, {
+      error: "OpenAI 호출 실패",
+      detail: e?.message || String(e),
+    });
+  }
+}

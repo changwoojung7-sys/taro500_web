@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tarot 500</title>
-  <link rel="stylesheet" href="./css/style.css"/>
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
   <div class="bg"></div>
@@ -54,10 +54,58 @@
         </label>
       </div>
 
-      <div class="panelHead" style="margin-top:14px">
+<div class="panelHead" style="margin-top:14px">
         <h2>스프레드 선택</h2>
+        <div class="hint">3장/5장/켈틱 크로스(10장)</div>
       </div>
-      <div id="spreadRow" class="spreadRow"></div>
+
+      <div class="spreadRow" id="spreadRow">
+
+        <button class="spreadBtn active" data-spread="3">
+            <b>과거·현재·미래 (3장)</b>
+            <span class="spreadHint">과거 · 현재 · 미래</span>
+        </button>
+
+        <button class="spreadBtn" data-spread="5">
+            <b>5장 리딩</b>
+            <span class="spreadHint">상황 · 장애 · 조언 · 결과 · 영향</span>
+        </button>
+
+        <button class="spreadBtn" data-spread="10">
+            <b>켈틱 크로스 (10장)</b>
+            <span class="spreadHint">상황 전체를 깊이 분석</span>
+        </button>
+
+      </div>
+
+      <!-- 종합해설 상세 옵션 -->
+      <div class="long-meaning-option">
+        <label class="long-toggle">
+          <input type="checkbox" id="useLongMeaning" checked>
+          <span>카드 상세해설 포함</span>
+        </label>
+      </div>
+      
+      <div class="panelHead" style="margin-top:14px">
+        <h2>종합해설</h2>
+        <div class="hint">로컬(무료) 또는 OpenAI(키 있으면)로 더 깊게</div>
+      </div>
+
+      <div class="modeRow" role="radiogroup" aria-label="해설 모드">
+        <label class="radio">
+          <input type="radio" name="mode" value="auto" checked>
+          <span>자동</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="local">
+          <span>로컬</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="openai">
+          <span>OpenAI</span>
+        </label>
+      </div>
+
 
       <div class="ctaRow">
         <button id="drawBtn" class="btn primary">카드 뽑기</button>
@@ -87,23 +135,25 @@
   </main>
 
   <!-- MODAL -->
-  <div id="modal" class="modal hidden">
-    <div class="modalCard">
-      <button id="modalClose" class="modalClose">×</button>
-      <div class="modalBody">
-        <div class="modalLeft">
-          <img id="modalImg"/>
-        </div>
-        <div class="modalRight">
-          <div id="modalPos" class="kicker"></div>
-          <h3 id="modalTitle"></h3>
-          <div id="modalChips" class="chips"></div>
-          <p id="modalText" class="modalText"></p>
-        </div>
+<div id="modal" class="modal hidden">
+  <div class="modalCard">
+    <button class="modalClose" id="modalClose">×</button>
+
+    <div class="modalBody">
+      <div class="modalLeft">
+        <img id="modalImg" alt="tarot card">
+      </div>
+
+      <div class="modalRight">
+        <div class="kicker" id="modalPos"></div>
+        <h3 id="modalTitle"></h3>
+        <p class="modalText" id="modalText"></p>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="./js/app.js"></script>
+<script src="/assets/js/app.js"></script>
+
 </body>
 </html>

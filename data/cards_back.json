@@ -1,0 +1,1840 @@
+[
+  {
+    "id": "m00",
+    "name_en": "The Fool",
+    "name_kr": "바보",
+    "arcana": "Major",
+    "suit": null,
+    "number": 0,
+    "image": "/data/cards/m00.jpg",
+    "upright": {
+      "keywords": [
+        "시작",
+        "자유",
+        "가능성"
+      ],
+      "meaning": "새 출발, 모험의 시작, 자유로운 선택"
+    },
+    "reversed": {
+      "keywords": [
+        "무모",
+        "불안",
+        "방향상실"
+      ],
+      "meaning": "준비 부족, 경솔함, 선택의 책임 회피"
+    }
+  },
+  {
+    "id": "m01",
+    "name_en": "The Magician",
+    "name_kr": "마법사",
+    "arcana": "Major",
+    "suit": null,
+    "number": 1,
+    "image": "/data/cards/m01.jpg",
+    "upright": {
+      "keywords": [
+        "의지",
+        "창조",
+        "능력"
+      ],
+      "meaning": "자원과 재능을 활용해 현실을 만들어감"
+    },
+    "reversed": {
+      "keywords": [
+        "기만",
+        "조작",
+        "산만"
+      ],
+      "meaning": "허세, 집중 부족, 의도의 왜곡"
+    }
+  },
+  {
+    "id": "m02",
+    "name_en": "The High Priestess",
+    "name_kr": "여사제",
+    "arcana": "Major",
+    "suit": null,
+    "number": 2,
+    "image": "/data/cards/m02.jpg",
+    "upright": {
+      "keywords": [
+        "직관",
+        "비밀",
+        "통찰"
+      ],
+      "meaning": "겉보다 내면을 읽고 직감을 신뢰"
+    },
+    "reversed": {
+      "keywords": [
+        "혼란",
+        "불신",
+        "은폐"
+      ],
+      "meaning": "직관을 무시하거나 사실을 숨김"
+    }
+  },
+  {
+    "id": "m03",
+    "name_en": "The Empress",
+    "name_kr": "여황제",
+    "arcana": "Major",
+    "suit": null,
+    "number": 3,
+    "image": "/data/cards/m03.jpg",
+    "upright": {
+      "keywords": [
+        "풍요",
+        "성장",
+        "보살핌"
+      ],
+      "meaning": "풍요와 창조성, 관계의 성장"
+    },
+    "reversed": {
+      "keywords": [
+        "의존",
+        "정체",
+        "과보호"
+      ],
+      "meaning": "집착, 성장이 멈춤"
+    }
+  },
+  {
+    "id": "m04",
+    "name_en": "The Emperor",
+    "name_kr": "황제",
+    "arcana": "Major",
+    "suit": null,
+    "number": 4,
+    "image": "/data/cards/m04.jpg",
+    "upright": {
+      "keywords": [
+        "안정",
+        "권위",
+        "책임"
+      ],
+      "meaning": "질서와 구조를 세워 안정화"
+    },
+    "reversed": {
+      "keywords": [
+        "독단",
+        "경직",
+        "통제"
+      ],
+      "meaning": "권위주의, 융통성 부족"
+    }
+  },
+  {
+    "id": "m05",
+    "name_en": "The Hierophant",
+    "name_kr": "교황",
+    "arcana": "Major",
+    "suit": null,
+    "number": 5,
+    "image": "/data/cards/m05.jpg",
+    "upright": {
+      "keywords": [
+        "전통",
+        "가르침",
+        "규범"
+      ],
+      "meaning": "조언, 교육, 제도적 도움"
+    },
+    "reversed": {
+      "keywords": [
+        "반항",
+        "형식",
+        "고정관념"
+      ],
+      "meaning": "틀에 갇힘 혹은 불필요한 반발"
+    }
+  },
+  {
+    "id": "m06",
+    "name_en": "The Lovers",
+    "name_kr": "연인",
+    "arcana": "Major",
+    "suit": null,
+    "number": 6,
+    "image": "/data/cards/m06.jpg",
+    "upright": {
+      "keywords": [
+        "사랑",
+        "조화",
+        "선택"
+      ],
+      "meaning": "가치에 따른 중요한 선택, 관계의 결속"
+    },
+    "reversed": {
+      "keywords": [
+        "갈등",
+        "유혹",
+        "불균형"
+      ],
+      "meaning": "마음이 흔들리거나 선택 미룸"
+    }
+  },
+  {
+    "id": "m07",
+    "name_en": "The Chariot",
+    "name_kr": "전차",
+    "arcana": "Major",
+    "suit": null,
+    "number": 7,
+    "image": "/data/cards/m07.jpg",
+    "upright": {
+      "keywords": [
+        "전진",
+        "승리",
+        "의지"
+      ],
+      "meaning": "목표를 향한 추진, 승리 가능"
+    },
+    "reversed": {
+      "keywords": [
+        "좌절",
+        "통제상실",
+        "무리"
+      ],
+      "meaning": "속도 조절 실패, 방향 잃음"
+    }
+  },
+  {
+    "id": "m08",
+    "name_en": "Strength",
+    "name_kr": "힘",
+    "arcana": "Major",
+    "suit": null,
+    "number": 8,
+    "image": "/data/cards/m08.jpg",
+    "upright": {
+      "keywords": [
+        "용기",
+        "인내",
+        "자제"
+      ],
+      "meaning": "부드러운 힘으로 상황을 다룸"
+    },
+    "reversed": {
+      "keywords": [
+        "불안",
+        "자신감부족",
+        "충동"
+      ],
+      "meaning": "감정에 휘둘림"
+    }
+  },
+  {
+    "id": "m09",
+    "name_en": "The Hermit",
+    "name_kr": "은둔자",
+    "arcana": "Major",
+    "suit": null,
+    "number": 9,
+    "image": "/data/cards/m09.jpg",
+    "upright": {
+      "keywords": [
+        "성찰",
+        "지혜",
+        "거리두기"
+      ],
+      "meaning": "혼자 정리하며 답을 찾음"
+    },
+    "reversed": {
+      "keywords": [
+        "고립",
+        "회피",
+        "정체"
+      ],
+      "meaning": "단절, 너무 숨음"
+    }
+  },
+  {
+    "id": "m10",
+    "name_en": "Wheel of Fortune",
+    "name_kr": "운명의 수레바퀴",
+    "arcana": "Major",
+    "suit": null,
+    "number": 10,
+    "image": "/data/cards/m10.jpg",
+    "upright": {
+      "keywords": [
+        "변화",
+        "기회",
+        "전환"
+      ],
+      "meaning": "흐름이 바뀌는 타이밍, 기회 포착"
+    },
+    "reversed": {
+      "keywords": [
+        "정체",
+        "반복",
+        "불운감"
+      ],
+      "meaning": "같은 문제 반복, 변화 지연"
+    }
+  },
+  {
+    "id": "m11",
+    "name_en": "Justice",
+    "name_kr": "정의",
+    "arcana": "Major",
+    "suit": null,
+    "number": 11,
+    "image": "/data/cards/m11.jpg",
+    "upright": {
+      "keywords": [
+        "공정",
+        "균형",
+        "책임"
+      ],
+      "meaning": "정확한 판단과 결과"
+    },
+    "reversed": {
+      "keywords": [
+        "편견",
+        "불공정",
+        "회피"
+      ],
+      "meaning": "책임 회피, 왜곡된 판단"
+    }
+  },
+  {
+    "id": "m12",
+    "name_en": "The Hanged Man",
+    "name_kr": "매달린 사람",
+    "arcana": "Major",
+    "suit": null,
+    "number": 12,
+    "image": "/data/cards/m12.jpg",
+    "upright": {
+      "keywords": [
+        "관점전환",
+        "기다림",
+        "수용"
+      ],
+      "meaning": "멈춰서 새 시각으로 봄"
+    },
+    "reversed": {
+      "keywords": [
+        "집착",
+        "정체",
+        "희생과다"
+      ],
+      "meaning": "불필요한 희생, 손해 감수"
+    }
+  },
+  {
+    "id": "m13",
+    "name_en": "Death",
+    "name_kr": "죽음",
+    "arcana": "Major",
+    "suit": null,
+    "number": 13,
+    "image": "/data/cards/m13.jpg",
+    "upright": {
+      "keywords": [
+        "종결",
+        "변화",
+        "재탄생"
+      ],
+      "meaning": "끝을 통해 새로 시작"
+    },
+    "reversed": {
+      "keywords": [
+        "저항",
+        "미련",
+        "지연"
+      ],
+      "meaning": "변화를 거부해 더 힘듦"
+    }
+  },
+  {
+    "id": "m14",
+    "name_en": "Temperance",
+    "name_kr": "절제",
+    "arcana": "Major",
+    "suit": null,
+    "number": 14,
+    "image": "/data/cards/m14.jpg",
+    "upright": {
+      "keywords": [
+        "조화",
+        "절제",
+        "중용"
+      ],
+      "meaning": "균형 잡힌 조율, 회복"
+    },
+    "reversed": {
+      "keywords": [
+        "극단",
+        "불균형",
+        "과함"
+      ],
+      "meaning": "한쪽으로 치우침"
+    }
+  },
+  {
+    "id": "m15",
+    "name_en": "The Devil",
+    "name_kr": "악마",
+    "arcana": "Major",
+    "suit": null,
+    "number": 15,
+    "image": "/data/cards/m15.jpg",
+    "upright": {
+      "keywords": [
+        "집착",
+        "유혹",
+        "속박"
+      ],
+      "meaning": "욕망/중독/관계의 얽힘"
+    },
+    "reversed": {
+      "keywords": [
+        "해방",
+        "각성",
+        "끊어냄"
+      ],
+      "meaning": "속박에서 벗어나려는 결단"
+    }
+  },
+  {
+    "id": "m16",
+    "name_en": "The Tower",
+    "name_kr": "탑",
+    "arcana": "Major",
+    "suit": null,
+    "number": 16,
+    "image": "/data/cards/m16.jpg",
+    "upright": {
+      "keywords": [
+        "충격",
+        "붕괴",
+        "각성"
+      ],
+      "meaning": "잘못된 기반이 무너지고 재정렬"
+    },
+    "reversed": {
+      "keywords": [
+        "회피",
+        "지연",
+        "미봉"
+      ],
+      "meaning": "변화를 피하다 더 커짐"
+    }
+  },
+  {
+    "id": "m17",
+    "name_en": "The Star",
+    "name_kr": "별",
+    "arcana": "Major",
+    "suit": null,
+    "number": 17,
+    "image": "/data/cards/m17.jpg",
+    "upright": {
+      "keywords": [
+        "희망",
+        "치유",
+        "영감"
+      ],
+      "meaning": "회복과 믿음, 길이 보임"
+    },
+    "reversed": {
+      "keywords": [
+        "절망",
+        "불신",
+        "무기력"
+      ],
+      "meaning": "희망을 잃음"
+    }
+  },
+  {
+    "id": "m18",
+    "name_en": "The Moon",
+    "name_kr": "달",
+    "arcana": "Major",
+    "suit": null,
+    "number": 18,
+    "image": "/data/cards/m18.jpg",
+    "upright": {
+      "keywords": [
+        "불확실",
+        "잠재의식",
+        "환상"
+      ],
+      "meaning": "안개 속 상황, 직관 필요"
+    },
+    "reversed": {
+      "keywords": [
+        "명확",
+        "진실",
+        "해소"
+      ],
+      "meaning": "혼란이 걷힘"
+    }
+  },
+  {
+    "id": "m19",
+    "name_en": "The Sun",
+    "name_kr": "태양",
+    "arcana": "Major",
+    "suit": null,
+    "number": 19,
+    "image": "/data/cards/m19.jpg",
+    "upright": {
+      "keywords": [
+        "성공",
+        "기쁨",
+        "활력"
+      ],
+      "meaning": "긍정과 성취, 좋은 소식"
+    },
+    "reversed": {
+      "keywords": [
+        "지연",
+        "과신",
+        "번아웃"
+      ],
+      "meaning": "기대치 조정 필요"
+    }
+  },
+  {
+    "id": "m20",
+    "name_en": "Judgement",
+    "name_kr": "심판",
+    "arcana": "Major",
+    "suit": null,
+    "number": 20,
+    "image": "/data/cards/m20.jpg",
+    "upright": {
+      "keywords": [
+        "각성",
+        "결단",
+        "부름"
+      ],
+      "meaning": "정리하고 새 단계로"
+    },
+    "reversed": {
+      "keywords": [
+        "후회",
+        "망설임",
+        "자기비난"
+      ],
+      "meaning": "결단 미룸"
+    }
+  },
+  {
+    "id": "m21",
+    "name_en": "The World",
+    "name_kr": "세계",
+    "arcana": "Major",
+    "suit": null,
+    "number": 21,
+    "image": "/data/cards/m21.jpg",
+    "upright": {
+      "keywords": [
+        "완성",
+        "성취",
+        "마무리"
+      ],
+      "meaning": "사이클 완성, 다음 단계"
+    },
+    "reversed": {
+      "keywords": [
+        "미완",
+        "지연",
+        "반쪽"
+      ],
+      "meaning": "마무리 체크 필요"
+    }
+  },
+  {
+    "id": "c01",
+    "name_en": "Ace of Cups",
+    "name_kr": "컵 에이스",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 1,
+    "image": "/data/cards/c01.jpg",
+    "upright": {
+      "keywords": [
+        "감정의시작",
+        "사랑"
+      ],
+      "meaning": "새로운 감정/호감/관계의 시작"
+    },
+    "reversed": {
+      "keywords": [
+        "감정억압",
+        "공허"
+      ],
+      "meaning": "마음이 닫히거나 기대가 꺾임"
+    }
+  },
+  {
+    "id": "c02",
+    "name_en": "Two of Cups",
+    "name_kr": "컵 2",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 2,
+    "image": "/data/cards/c02.jpg",
+    "upright": {
+      "keywords": [
+        "교감",
+        "파트너십"
+      ],
+      "meaning": "서로를 이해하고 연결됨"
+    },
+    "reversed": {
+      "keywords": [
+        "불균형",
+        "오해"
+      ],
+      "meaning": "감정의 균형이 깨짐"
+    }
+  },
+  {
+    "id": "c03",
+    "name_en": "Three of Cups",
+    "name_kr": "컵 3",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 3,
+    "image": "/data/cards/c03.jpg",
+    "upright": {
+      "keywords": [
+        "축하",
+        "우정"
+      ],
+      "meaning": "기쁨을 나누는 모임/축하"
+    },
+    "reversed": {
+      "keywords": [
+        "과도",
+        "가십"
+      ],
+      "meaning": "과음/소문/과열"
+    }
+  },
+  {
+    "id": "c04",
+    "name_en": "Four of Cups",
+    "name_kr": "컵 4",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 4,
+    "image": "/data/cards/c04.jpg",
+    "upright": {
+      "keywords": [
+        "권태",
+        "재고"
+      ],
+      "meaning": "마음이 식고 무기력"
+    },
+    "reversed": {
+      "keywords": [
+        "각성",
+        "새기회"
+      ],
+      "meaning": "새 기회를 알아챔"
+    }
+  },
+  {
+    "id": "c05",
+    "name_en": "Five of Cups",
+    "name_kr": "컵 5",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 5,
+    "image": "/data/cards/c05.jpg",
+    "upright": {
+      "keywords": [
+        "상실",
+        "후회"
+      ],
+      "meaning": "아쉬움과 슬픔, 놓친 것에 집중"
+    },
+    "reversed": {
+      "keywords": [
+        "회복",
+        "수용"
+      ],
+      "meaning": "남은 것을 보고 회복"
+    }
+  },
+  {
+    "id": "c06",
+    "name_en": "Six of Cups",
+    "name_kr": "컵 6",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 6,
+    "image": "/data/cards/c06.jpg",
+    "upright": {
+      "keywords": [
+        "추억",
+        "순수"
+      ],
+      "meaning": "과거의 따뜻함, 순수한 마음"
+    },
+    "reversed": {
+      "keywords": [
+        "집착",
+        "유아적"
+      ],
+      "meaning": "과거에 묶임"
+    }
+  },
+  {
+    "id": "c07",
+    "name_en": "Seven of Cups",
+    "name_kr": "컵 7",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 7,
+    "image": "/data/cards/c07.jpg",
+    "upright": {
+      "keywords": [
+        "선택",
+        "환상"
+      ],
+      "meaning": "선택지가 많아 혼란"
+    },
+    "reversed": {
+      "keywords": [
+        "현실",
+        "결정"
+      ],
+      "meaning": "현실적으로 정리"
+    }
+  },
+  {
+    "id": "c08",
+    "name_en": "Eight of Cups",
+    "name_kr": "컵 8",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 8,
+    "image": "/data/cards/c08.jpg",
+    "upright": {
+      "keywords": [
+        "이별",
+        "전환"
+      ],
+      "meaning": "떠나야 할 때, 감정적 정리"
+    },
+    "reversed": {
+      "keywords": [
+        "미련",
+        "정체"
+      ],
+      "meaning": "결단을 미룸"
+    }
+  },
+  {
+    "id": "c09",
+    "name_en": "Nine of Cups",
+    "name_kr": "컵 9",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 9,
+    "image": "/data/cards/c09.jpg",
+    "upright": {
+      "keywords": [
+        "만족",
+        "성취"
+      ],
+      "meaning": "바라던 감정적 성취"
+    },
+    "reversed": {
+      "keywords": [
+        "과욕",
+        "불만"
+      ],
+      "meaning": "만족이 깨짐"
+    }
+  },
+  {
+    "id": "c10",
+    "name_en": "Ten of Cups",
+    "name_kr": "컵 10",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 10,
+    "image": "/data/cards/c10.jpg",
+    "upright": {
+      "keywords": [
+        "행복",
+        "가족"
+      ],
+      "meaning": "관계의 안정과 행복"
+    },
+    "reversed": {
+      "keywords": [
+        "불화",
+        "불안"
+      ],
+      "meaning": "가정/관계의 균열"
+    }
+  },
+  {
+    "id": "c11",
+    "name_en": "Page of Cups",
+    "name_kr": "컵 페이지",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 11,
+    "image": "/data/cards/c11.jpg",
+    "upright": {
+      "keywords": [
+        "메시지",
+        "호기심"
+      ],
+      "meaning": "감정적 제안/소식"
+    },
+    "reversed": {
+      "keywords": [
+        "유치",
+        "변덕"
+      ],
+      "meaning": "감정이 불안정"
+    }
+  },
+  {
+    "id": "c12",
+    "name_en": "Knight of Cups",
+    "name_kr": "컵 나이트",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 12,
+    "image": "/data/cards/c12.jpg",
+    "upright": {
+      "keywords": [
+        "로맨스",
+        "제안"
+      ],
+      "meaning": "감성적 접근, 고백/제안"
+    },
+    "reversed": {
+      "keywords": [
+        "환상",
+        "우유부단"
+      ],
+      "meaning": "현실성 부족"
+    }
+  },
+  {
+    "id": "c13",
+    "name_en": "Queen of Cups",
+    "name_kr": "컵 퀸",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 13,
+    "image": "/data/cards/c13.jpg",
+    "upright": {
+      "keywords": [
+        "공감",
+        "직관"
+      ],
+      "meaning": "따뜻한 공감과 배려"
+    },
+    "reversed": {
+      "keywords": [
+        "과민",
+        "의존"
+      ],
+      "meaning": "감정 기복"
+    }
+  },
+  {
+    "id": "c14",
+    "name_en": "King of Cups",
+    "name_kr": "컵 킹",
+    "arcana": "Minor",
+    "suit": "Cups",
+    "number": 14,
+    "image": "/data/cards/c14.jpg",
+    "upright": {
+      "keywords": [
+        "안정",
+        "성숙"
+      ],
+      "meaning": "감정을 다스리는 성숙함"
+    },
+    "reversed": {
+      "keywords": [
+        "기복",
+        "조작"
+      ],
+      "meaning": "감정으로 흔들거나 휘두름"
+    }
+  },
+  {
+    "id": "p01",
+    "name_en": "Ace of Pentacles",
+    "name_kr": "펜타클 에이스",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 1,
+    "image": "/data/cards/p01.jpg",
+    "upright": {
+      "keywords": [
+        "현실적기회",
+        "돈"
+      ],
+      "meaning": "실질적인 기회/수익의 씨앗"
+    },
+    "reversed": {
+      "keywords": [
+        "기회상실",
+        "낭비"
+      ],
+      "meaning": "기회를 놓치거나 낭비"
+    }
+  },
+  {
+    "id": "p02",
+    "name_en": "Two of Pentacles",
+    "name_kr": "펜타클 2",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 2,
+    "image": "/data/cards/p02.jpg",
+    "upright": {
+      "keywords": [
+        "균형",
+        "멀티태스킹"
+      ],
+      "meaning": "일/돈의 균형 조절"
+    },
+    "reversed": {
+      "keywords": [
+        "과부하",
+        "혼란"
+      ],
+      "meaning": "우선순위 붕괴"
+    }
+  },
+  {
+    "id": "p03",
+    "name_en": "Three of Pentacles",
+    "name_kr": "펜타클 3",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 3,
+    "image": "/data/cards/p03.jpg",
+    "upright": {
+      "keywords": [
+        "협업",
+        "기술"
+      ],
+      "meaning": "팀워크, 기술의 인정"
+    },
+    "reversed": {
+      "keywords": [
+        "불협",
+        "미완"
+      ],
+      "meaning": "협업 문제"
+    }
+  },
+  {
+    "id": "p04",
+    "name_en": "Four of Pentacles",
+    "name_kr": "펜타클 4",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 4,
+    "image": "/data/cards/p04.jpg",
+    "upright": {
+      "keywords": [
+        "소유",
+        "보수"
+      ],
+      "meaning": "지키고 보존함"
+    },
+    "reversed": {
+      "keywords": [
+        "해방",
+        "나눔"
+      ],
+      "meaning": "집착을 내려놓음"
+    }
+  },
+  {
+    "id": "p05",
+    "name_en": "Five of Pentacles",
+    "name_kr": "펜타클 5",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 5,
+    "image": "/data/cards/p05.jpg",
+    "upright": {
+      "keywords": [
+        "결핍",
+        "지원"
+      ],
+      "meaning": "경제적 압박, 도움 필요"
+    },
+    "reversed": {
+      "keywords": [
+        "회복",
+        "도움"
+      ],
+      "meaning": "지원으로 회복"
+    }
+  },
+  {
+    "id": "p06",
+    "name_en": "Six of Pentacles",
+    "name_kr": "펜타클 6",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 6,
+    "image": "/data/cards/p06.jpg",
+    "upright": {
+      "keywords": [
+        "나눔",
+        "공정"
+      ],
+      "meaning": "주고받음의 균형"
+    },
+    "reversed": {
+      "keywords": [
+        "불공정",
+        "의존"
+      ],
+      "meaning": "불균형한 관계"
+    }
+  },
+  {
+    "id": "p07",
+    "name_en": "Seven of Pentacles",
+    "name_kr": "펜타클 7",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 7,
+    "image": "/data/cards/p07.jpg",
+    "upright": {
+      "keywords": [
+        "기다림",
+        "평가"
+      ],
+      "meaning": "성과를 기다리며 점검"
+    },
+    "reversed": {
+      "keywords": [
+        "조급",
+        "포기"
+      ],
+      "meaning": "너무 빨리 판단"
+    }
+  },
+  {
+    "id": "p08",
+    "name_en": "Eight of Pentacles",
+    "name_kr": "펜타클 8",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 8,
+    "image": "/data/cards/p08.jpg",
+    "upright": {
+      "keywords": [
+        "노력",
+        "숙련"
+      ],
+      "meaning": "꾸준히 실력을 쌓음"
+    },
+    "reversed": {
+      "keywords": [
+        "태만",
+        "완벽주의"
+      ],
+      "meaning": "집중 부족 혹은 과한 완벽주의"
+    }
+  },
+  {
+    "id": "p09",
+    "name_en": "Nine of Pentacles",
+    "name_kr": "펜타클 9",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 9,
+    "image": "/data/cards/p09.jpg",
+    "upright": {
+      "keywords": [
+        "자립",
+        "여유"
+      ],
+      "meaning": "독립과 안정, 성취"
+    },
+    "reversed": {
+      "keywords": [
+        "허영",
+        "불안"
+      ],
+      "meaning": "불안정/과시"
+    }
+  },
+  {
+    "id": "p10",
+    "name_en": "Ten of Pentacles",
+    "name_kr": "펜타클 10",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 10,
+    "image": "/data/cards/p10.jpg",
+    "upright": {
+      "keywords": [
+        "유산",
+        "장기안정"
+      ],
+      "meaning": "가족/자산의 장기 안정"
+    },
+    "reversed": {
+      "keywords": [
+        "불안",
+        "갈등"
+      ],
+      "meaning": "가정/재정 문제"
+    }
+  },
+  {
+    "id": "p11",
+    "name_en": "Page of Pentacles",
+    "name_kr": "펜타클 페이지",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 11,
+    "image": "/data/cards/p11.jpg",
+    "upright": {
+      "keywords": [
+        "학습",
+        "기회"
+      ],
+      "meaning": "새 프로젝트/공부"
+    },
+    "reversed": {
+      "keywords": [
+        "미숙",
+        "산만"
+      ],
+      "meaning": "실행 부족"
+    }
+  },
+  {
+    "id": "p12",
+    "name_en": "Knight of Pentacles",
+    "name_kr": "펜타클 나이트",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 12,
+    "image": "/data/cards/p12.jpg",
+    "upright": {
+      "keywords": [
+        "성실",
+        "꾸준함"
+      ],
+      "meaning": "천천히 확실히"
+    },
+    "reversed": {
+      "keywords": [
+        "정체",
+        "고집"
+      ],
+      "meaning": "변화 거부"
+    }
+  },
+  {
+    "id": "p13",
+    "name_en": "Queen of Pentacles",
+    "name_kr": "펜타클 퀸",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 13,
+    "image": "/data/cards/p13.jpg",
+    "upright": {
+      "keywords": [
+        "배려",
+        "현실감"
+      ],
+      "meaning": "돌봄과 실용"
+    },
+    "reversed": {
+      "keywords": [
+        "과보호",
+        "통제"
+      ],
+      "meaning": "지나친 간섭"
+    }
+  },
+  {
+    "id": "p14",
+    "name_en": "King of Pentacles",
+    "name_kr": "펜타클 킹",
+    "arcana": "Minor",
+    "suit": "Pentacles",
+    "number": 14,
+    "image": "/data/cards/p14.jpg",
+    "upright": {
+      "keywords": [
+        "성공",
+        "안정"
+      ],
+      "meaning": "현실적 성공과 리더십"
+    },
+    "reversed": {
+      "keywords": [
+        "탐욕",
+        "완고"
+      ],
+      "meaning": "물질 집착"
+    }
+  },
+  {
+    "id": "s01",
+    "name_en": "Ace of Swords",
+    "name_kr": "소드 에이스",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 1,
+    "image": "/data/cards/s01.jpg",
+    "upright": {
+      "keywords": [
+        "결단",
+        "명료"
+      ],
+      "meaning": "명확한 판단과 진실"
+    },
+    "reversed": {
+      "keywords": [
+        "혼란",
+        "오판"
+      ],
+      "meaning": "판단 착오/정보 부족"
+    }
+  },
+  {
+    "id": "s02",
+    "name_en": "Two of Swords",
+    "name_kr": "소드 2",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 2,
+    "image": "/data/cards/s02.jpg",
+    "upright": {
+      "keywords": [
+        "보류",
+        "균형"
+      ],
+      "meaning": "결정을 잠시 보류"
+    },
+    "reversed": {
+      "keywords": [
+        "갈등",
+        "압박"
+      ],
+      "meaning": "결정 회피가 문제"
+    }
+  },
+  {
+    "id": "s03",
+    "name_en": "Three of Swords",
+    "name_kr": "소드 3",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 3,
+    "image": "/data/cards/s03.jpg",
+    "upright": {
+      "keywords": [
+        "상처",
+        "진실"
+      ],
+      "meaning": "아픈 진실, 마음의 상처"
+    },
+    "reversed": {
+      "keywords": [
+        "치유",
+        "회복"
+      ],
+      "meaning": "회복 시작"
+    }
+  },
+  {
+    "id": "s04",
+    "name_en": "Four of Swords",
+    "name_kr": "소드 4",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 4,
+    "image": "/data/cards/s04.jpg",
+    "upright": {
+      "keywords": [
+        "휴식",
+        "회복"
+      ],
+      "meaning": "잠시 멈추고 재정비"
+    },
+    "reversed": {
+      "keywords": [
+        "불면",
+        "과로"
+      ],
+      "meaning": "휴식 부족"
+    }
+  },
+  {
+    "id": "s05",
+    "name_en": "Five of Swords",
+    "name_kr": "소드 5",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 5,
+    "image": "/data/cards/s05.jpg",
+    "upright": {
+      "keywords": [
+        "갈등",
+        "승리의대가"
+      ],
+      "meaning": "다툼, 승리의 대가"
+    },
+    "reversed": {
+      "keywords": [
+        "화해",
+        "종결"
+      ],
+      "meaning": "갈등 정리"
+    }
+  },
+  {
+    "id": "s06",
+    "name_en": "Six of Swords",
+    "name_kr": "소드 6",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 6,
+    "image": "/data/cards/s06.jpg",
+    "upright": {
+      "keywords": [
+        "이동",
+        "전환"
+      ],
+      "meaning": "더 나은 곳으로 이동"
+    },
+    "reversed": {
+      "keywords": [
+        "정체",
+        "미련"
+      ],
+      "meaning": "떠나지 못함"
+    }
+  },
+  {
+    "id": "s07",
+    "name_en": "Seven of Swords",
+    "name_kr": "소드 7",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 7,
+    "image": "/data/cards/s07.jpg",
+    "upright": {
+      "keywords": [
+        "기만",
+        "전략"
+      ],
+      "meaning": "숨기거나 전략적 행동"
+    },
+    "reversed": {
+      "keywords": [
+        "노출",
+        "정직"
+      ],
+      "meaning": "진실이 드러남"
+    }
+  },
+  {
+    "id": "s08",
+    "name_en": "Eight of Swords",
+    "name_kr": "소드 8",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 8,
+    "image": "/data/cards/s08.jpg",
+    "upright": {
+      "keywords": [
+        "속박",
+        "제한"
+      ],
+      "meaning": "스스로를 묶음"
+    },
+    "reversed": {
+      "keywords": [
+        "해방",
+        "돌파"
+      ],
+      "meaning": "벗어날 길이 보임"
+    }
+  },
+  {
+    "id": "s09",
+    "name_en": "Nine of Swords",
+    "name_kr": "소드 9",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 9,
+    "image": "/data/cards/s09.jpg",
+    "upright": {
+      "keywords": [
+        "불안",
+        "걱정"
+      ],
+      "meaning": "걱정/죄책감"
+    },
+    "reversed": {
+      "keywords": [
+        "완화",
+        "해소"
+      ],
+      "meaning": "불안 감소"
+    }
+  },
+  {
+    "id": "s10",
+    "name_en": "Ten of Swords",
+    "name_kr": "소드 10",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 10,
+    "image": "/data/cards/s10.jpg",
+    "upright": {
+      "keywords": [
+        "종말",
+        "정리"
+      ],
+      "meaning": "끝, 정리"
+    },
+    "reversed": {
+      "keywords": [
+        "회복",
+        "재기"
+      ],
+      "meaning": "바닥 이후 회복"
+    }
+  },
+  {
+    "id": "s11",
+    "name_en": "Page of Swords",
+    "name_kr": "소드 페이지",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 11,
+    "image": "/data/cards/s11.jpg",
+    "upright": {
+      "keywords": [
+        "호기심",
+        "감시"
+      ],
+      "meaning": "정보 수집, 경계"
+    },
+    "reversed": {
+      "keywords": [
+        "경솔",
+        "말실수"
+      ],
+      "meaning": "소통 문제"
+    }
+  },
+  {
+    "id": "s12",
+    "name_en": "Knight of Swords",
+    "name_kr": "소드 나이트",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 12,
+    "image": "/data/cards/s12.jpg",
+    "upright": {
+      "keywords": [
+        "돌진",
+        "결단"
+      ],
+      "meaning": "빠른 행동"
+    },
+    "reversed": {
+      "keywords": [
+        "무모",
+        "공격성"
+      ],
+      "meaning": "성급함"
+    }
+  },
+  {
+    "id": "s13",
+    "name_en": "Queen of Swords",
+    "name_kr": "소드 퀸",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 13,
+    "image": "/data/cards/s13.jpg",
+    "upright": {
+      "keywords": [
+        "이성",
+        "명확"
+      ],
+      "meaning": "냉철한 판단"
+    },
+    "reversed": {
+      "keywords": [
+        "냉혹",
+        "상처"
+      ],
+      "meaning": "말이 날카로움"
+    }
+  },
+  {
+    "id": "s14",
+    "name_en": "King of Swords",
+    "name_kr": "소드 킹",
+    "arcana": "Minor",
+    "suit": "Swords",
+    "number": 14,
+    "image": "/data/cards/s14.jpg",
+    "upright": {
+      "keywords": [
+        "권위",
+        "논리"
+      ],
+      "meaning": "논리적 리더십"
+    },
+    "reversed": {
+      "keywords": [
+        "독선",
+        "권력남용"
+      ],
+      "meaning": "독단"
+    }
+  },
+  {
+    "id": "w01",
+    "name_en": "Ace of Wands",
+    "name_kr": "완드 에이스",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 1,
+    "image": "/data/cards/w01.jpg",
+    "upright": {
+      "keywords": [
+        "열정",
+        "시작"
+      ],
+      "meaning": "불꽃 같은 시작"
+    },
+    "reversed": {
+      "keywords": [
+        "지연",
+        "의욕저하"
+      ],
+      "meaning": "동기 저하"
+    }
+  },
+  {
+    "id": "w02",
+    "name_en": "Two of Wands",
+    "name_kr": "완드 2",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 2,
+    "image": "/data/cards/w02.jpg",
+    "upright": {
+      "keywords": [
+        "계획",
+        "확장"
+      ],
+      "meaning": "미래를 설계"
+    },
+    "reversed": {
+      "keywords": [
+        "망설임",
+        "두려움"
+      ],
+      "meaning": "결정 회피"
+    }
+  },
+  {
+    "id": "w03",
+    "name_en": "Three of Wands",
+    "name_kr": "완드 3",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 3,
+    "image": "/data/cards/w03.jpg",
+    "upright": {
+      "keywords": [
+        "전망",
+        "확장"
+      ],
+      "meaning": "성과의 확장"
+    },
+    "reversed": {
+      "keywords": [
+        "지연",
+        "좌절"
+      ],
+      "meaning": "진행이 느림"
+    }
+  },
+  {
+    "id": "w04",
+    "name_en": "Four of Wands",
+    "name_kr": "완드 4",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 4,
+    "image": "/data/cards/w04.jpg",
+    "upright": {
+      "keywords": [
+        "안정",
+        "축하"
+      ],
+      "meaning": "안정과 축하"
+    },
+    "reversed": {
+      "keywords": [
+        "불안",
+        "분열"
+      ],
+      "meaning": "기반 불안"
+    }
+  },
+  {
+    "id": "w05",
+    "name_en": "Five of Wands",
+    "name_kr": "완드 5",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 5,
+    "image": "/data/cards/w05.jpg",
+    "upright": {
+      "keywords": [
+        "경쟁",
+        "갈등"
+      ],
+      "meaning": "의견 충돌"
+    },
+    "reversed": {
+      "keywords": [
+        "합의",
+        "완화"
+      ],
+      "meaning": "경쟁이 정리"
+    }
+  },
+  {
+    "id": "w06",
+    "name_en": "Six of Wands",
+    "name_kr": "완드 6",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 6,
+    "image": "/data/cards/w06.jpg",
+    "upright": {
+      "keywords": [
+        "승리",
+        "인정"
+      ],
+      "meaning": "성과 인정"
+    },
+    "reversed": {
+      "keywords": [
+        "과시",
+        "불안"
+      ],
+      "meaning": "인정에 집착"
+    }
+  },
+  {
+    "id": "w07",
+    "name_en": "Seven of Wands",
+    "name_kr": "완드 7",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 7,
+    "image": "/data/cards/w07.jpg",
+    "upright": {
+      "keywords": [
+        "방어",
+        "주장"
+      ],
+      "meaning": "자기 자리 지키기"
+    },
+    "reversed": {
+      "keywords": [
+        "굴복",
+        "압박"
+      ],
+      "meaning": "압박에 흔들림"
+    }
+  },
+  {
+    "id": "w08",
+    "name_en": "Eight of Wands",
+    "name_kr": "완드 8",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 8,
+    "image": "/data/cards/w08.jpg",
+    "upright": {
+      "keywords": [
+        "속도",
+        "소식"
+      ],
+      "meaning": "빠른 진전"
+    },
+    "reversed": {
+      "keywords": [
+        "지연",
+        "오해"
+      ],
+      "meaning": "소통 지연"
+    }
+  },
+  {
+    "id": "w09",
+    "name_en": "Nine of Wands",
+    "name_kr": "완드 9",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 9,
+    "image": "/data/cards/w09.jpg",
+    "upright": {
+      "keywords": [
+        "인내",
+        "경계"
+      ],
+      "meaning": "끝까지 버팀"
+    },
+    "reversed": {
+      "keywords": [
+        "탈진",
+        "포기"
+      ],
+      "meaning": "에너지 고갈"
+    }
+  },
+  {
+    "id": "w10",
+    "name_en": "Ten of Wands",
+    "name_kr": "완드 10",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 10,
+    "image": "/data/cards/w10.jpg",
+    "upright": {
+      "keywords": [
+        "과부하",
+        "책임"
+      ],
+      "meaning": "짐이 무거움"
+    },
+    "reversed": {
+      "keywords": [
+        "해방",
+        "위임"
+      ],
+      "meaning": "내려놓기"
+    }
+  },
+  {
+    "id": "w11",
+    "name_en": "Page of Wands",
+    "name_kr": "완드 페이지",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 11,
+    "image": "/data/cards/w11.jpg",
+    "upright": {
+      "keywords": [
+        "호기심",
+        "도전"
+      ],
+      "meaning": "새로운 시도"
+    },
+    "reversed": {
+      "keywords": [
+        "충동",
+        "미숙"
+      ],
+      "meaning": "준비 부족"
+    }
+  },
+  {
+    "id": "w12",
+    "name_en": "Knight of Wands",
+    "name_kr": "완드 나이트",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 12,
+    "image": "/data/cards/w12.jpg",
+    "upright": {
+      "keywords": [
+        "모험",
+        "추진"
+      ],
+      "meaning": "대담한 추진"
+    },
+    "reversed": {
+      "keywords": [
+        "무모",
+        "변덕"
+      ],
+      "meaning": "충동적 변화"
+    }
+  },
+  {
+    "id": "w13",
+    "name_en": "Queen of Wands",
+    "name_kr": "완드 퀸",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 13,
+    "image": "/data/cards/w13.jpg",
+    "upright": {
+      "keywords": [
+        "자신감",
+        "매력"
+      ],
+      "meaning": "카리스마"
+    },
+    "reversed": {
+      "keywords": [
+        "질투",
+        "과열"
+      ],
+      "meaning": "감정 과열"
+    }
+  },
+  {
+    "id": "w14",
+    "name_en": "King of Wands",
+    "name_kr": "완드 킹",
+    "arcana": "Minor",
+    "suit": "Wands",
+    "number": 14,
+    "image": "/data/cards/w14.jpg",
+    "upright": {
+      "keywords": [
+        "비전",
+        "리더십"
+      ],
+      "meaning": "큰 그림을 이끄는 힘"
+    },
+    "reversed": {
+      "keywords": [
+        "독단",
+        "성급"
+      ],
+      "meaning": "밀어붙임"
+    }
+  }
+]
