@@ -1,5 +1,7 @@
+import OpenAI from "openai";
+
 export async function onRequestPost({ request, env }) {
-  // CORS Preflight
+  // ✅ CORS Preflight
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -11,12 +13,17 @@ export async function onRequestPost({ request, env }) {
     });
   }
 
+  // ✅ API Key 확인
   if (!env.OPENAI_API_KEY) {
     return new Response(
       JSON.stringify({ error: "OPENAI_API_KEY not configured" }),
       { status: 500 }
     );
   }
+
+  const openai = new OpenAI({
+    apiKey: env.OPENAI_API_KEY,
+  });
 
   let payload;
   try {
@@ -37,41 +44,25 @@ export async function onRequestPost({ request, env }) {
     );
   }
 
-  const prompt = buildAIPrompt(summaryText, cards);
-
-  // 🔥 OpenAI REST API 직접 호출
-  const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      temperature: 0.8,
-      messages: [
-        { role: "system", content: "You are a professional tarot reader." },
-        { role: "user", content: prompt },
-      ],
-    }),
+  // ✅ OpenAI 호출
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    temperature: 0.8,
+    messages: [
+      {
+        role: "system",
+        content: "You are a professional tarot reader.",
+      },
+      {
+        role: "user",
+        content: buildAIPrompt(summaryText, cards),
+      },
+    ],
   });
-
-  if (!aiRes.ok) {
-    const errText = await aiRes.text();
-    return new Response(
-      JSON.stringify({
-        error: "OpenAI API error",
-        detail: errText,
-      }),
-      { status: aiRes.status }
-    );
-  }
-
-  const data = await aiRes.json();
 
   let result;
   try {
-    result = JSON.parse(data.choices[0].message.content);
+    result = JSON.parse(completion.choices[0].message.content);
   } catch {
     return new Response(
       JSON.stringify({ error: "AI response parsing failed" }),
