@@ -1,21 +1,23 @@
 import OpenAI from "openai";
 
-/**
- * Netlify Function: /api/tarot_ai (또는 /.netlify/functions/tarot_ai)
- * Request body (JSON):
- * {
- *   "summaryText": "....",
- *   "cards": [{ name_kr, name_en, is_reversed, position_label, upright, reversed, ... }]
- * }
- */
+// function createOpenAIClient() {
+//   const apiKey =
+//     process.env.OPENAI_API_KEY ||
+//     globalThis?.OPENAI_API_KEY || // (일부 런타임 대비)
+//     "";
 
-function createOpenAIClient() {
-  const apiKey =
-    process.env.OPENAI_API_KEY ||
-    globalThis?.OPENAI_API_KEY || // (일부 런타임 대비)
-    "";
+//   if (!apiKey) throw new Error("OPENAI_API_KEY is not defined");
+//   return new OpenAI({ apiKey });
+// }
 
-  if (!apiKey) throw new Error("OPENAI_API_KEY is not defined");
+//clodeflare workers 버전
+function createOpenAIClient(env) {
+  const apiKey = env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not defined");
+  }
+
   return new OpenAI({ apiKey });
 }
 
