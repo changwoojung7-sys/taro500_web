@@ -461,6 +461,9 @@ async function runOpenAIReadingIfNeeded() {
       })),
     };
 
+    const loadingEl = document.getElementById("aiLoading");
+    if (loadingEl) loadingEl.classList.remove("hidden");
+
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -481,6 +484,10 @@ async function runOpenAIReadingIfNeeded() {
       result: aiResult.result || "",
     };
 
+    if (loadingEl) loadingEl.classList.add("hidden");
+    summaryEl.textContent = buildRichSummary(lastDraw);
+
+   
     // ✅ 종합 패널 갱신
     if (summaryEl) {
       summaryEl.textContent = buildRichSummary(lastDraw);
@@ -495,8 +502,14 @@ async function runOpenAIReadingIfNeeded() {
     }
   } finally {
     aiLoading = false;
+    if (loadingEl) loadingEl.classList.add("hidden");
   }
 }
+
+
+
+
+
 
 /* ------------------------
    Clear
