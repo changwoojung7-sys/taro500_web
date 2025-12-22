@@ -1,9 +1,7 @@
 export async function onRequest(context) {
   const { request } = context;
 
-  /* ===============================
-     CORS Preflight
-  =============================== */
+  // ✅ CORS + Preflight
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -18,32 +16,9 @@ export async function onRequest(context) {
     });
   }
 
-  /* ===============================
-     Body Parsing
-  =============================== */
-  let payload;
   try {
-    payload = await request.json();
-  } catch {
-    return new Response(
-      JSON.stringify({ error: "Invalid JSON body" }),
-      { status: 400, headers: corsHeaders }
-    );
-  }
+    const payload = await request.json();
 
-  const { summaryText, cards } = payload;
-
-  if (!summaryText || !Array.isArray(cards)) {
-    return new Response(
-      JSON.stringify({ error: "Invalid payload" }),
-      { status: 400, headers: corsHeaders }
-    );
-  }
-
-  /* ===============================
-     Render Flask API 호출
-  =============================== */
-  try {
     const res = await fetch(
       "https://saju500.onrender.com/api/tarot",
       {
@@ -51,57 +26,33 @@ export async function onRequest(context) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          question: summaryText,
-          cards: cards.map((c, i) => ({
-            name_kr: c.name_kr,
-            is_reversed: c.is_reversed,
-            position_label: c.position_label,
-            index: i,
-          })),
-          spread: payload.spread || "기본 배열",
-        }),
+        body: JSON.stringify(payload),
       }
     );
 
     if (!res.ok) {
-      const errText = await res.text();
+      const t = await res.text();
       return new Response(
-        JSON.stringify({ error: "Render API error", detail: errText }),
+        JSON.stringify({ error: "Render API error", detail: t }),
         { status: 500, headers: corsHeaders }
       );
     }
 
     const data = await res.json();
 
-// 🔥 그대로 전달 (구조 유지)
-return new Response(
-  JSON.stringify({
-    card_comments: data.card_comments || [],
-    overall_comment: data.overall_comment || {},
-    result: data.result || "",   // 문자열 버전도 대비
-  }),
-  {
-    status: 200,
-    headers: corsHeaders,
-  }
-);
-
-
-  } catch (err) {
     return new Response(
-      JSON.stringify({
-        error: "Failed to call Render API",
-        detail: String(err),
-      }),
+      JSON.stringify(data),
+      { status: 200, headers: corsHeaders }
+    );
+
+  } catch (e) {
+    return new Response(
+      JSON.stringify({ error: String(e) }),
       { status: 500, headers: corsHeaders }
     );
   }
 }
 
-/* ===============================
-   CORS Headers
-=============================== */
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
