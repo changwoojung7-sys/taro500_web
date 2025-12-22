@@ -1,361 +1,833 @@
-/* ------------------------------
-   글로벌 설정
------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Nanum+Myeongjo:wght@400;700&display=swap');
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: 'Noto Serif KR', serif;
-    background: #050811;
-    color: #fafafa;
-    overflow-x: hidden;
+:root{
+  --bg:#070a15;
+  --fg:#e7e9ff;
+  --muted:rgba(231,233,255,.7);
+  --card:#0c1030cc;
+  --stroke:rgba(255,255,255,.10);
+  --glow: rgba(120, 88, 255, .45);
+  --glow2: rgba(34, 197, 94, .35);
 }
 
-/* ------------------------------
-   배경 (반응형)
------------------------------- */
-.bg-overlay {
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 50%),
-        radial-gradient(circle at bottom, rgba(0,255,180,0.1), transparent 55%),
-        url("bg-bw.jpg") center center / cover no-repeat;
-    opacity: 0.32;
-    filter: blur(1.5px);
-    z-index: -1;
+*{box-sizing:border-box}
+html,body{height:100%}
+
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+               "Apple SD Gothic Neo","Noto Sans KR", sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x:hidden;
 }
 
-/* ------------------------------
-   컨테이너 & 레이아웃
------------------------------- */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 32px 18px 60px;
+/* ================= BACKGROUND ================= */
+.bg{
+  position:fixed; inset:-40vh -30vw;
+  background:
+    radial-gradient(closest-side, rgba(120,88,255,.25), transparent 60%),
+    radial-gradient(closest-side, rgba(34,197,94,.18), transparent 60%),
+    radial-gradient(closest-side, rgba(56,189,248,.12), transparent 60%);
+  filter: blur(40px);
+  animation: float 12s ease-in-out infinite alternate;
+  z-index:-1;
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 26px;
+@keyframes float{
+  from{ transform: translate3d(-2vw, -1vh,0) scale(1.02);}
+  to{ transform: translate3d(2vw, 2vh,0) scale(1.08);}
 }
 
-.header h1 {
-    font-family: 'Nanum Myeongjo', serif;
-    font-size: 1.7rem;
-    line-height: 1.35;
-    color: #f8f6ef;
-    letter-spacing: 0.15em;
+/* ================= TOPBAR ================= */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 20px;
+  border-bottom:1px solid var(--stroke);
+  background: rgba(7,10,21,.55);
+  backdrop-filter: blur(10px);
+  position:sticky; top:0; z-index:10;
 }
 
-.subtitle {
-    margin-top: 6px;
-    color: #c7c4bc;
-    font-size: 0.95rem;
-    opacity: 0.85;
+.brand{display:flex; gap:12px; align-items:center}
+
+.logo{
+  width:44px; height:44px; display:grid; place-items:center;
+  border-radius:14px;
+  background: linear-gradient(145deg, rgba(120,88,255,.35), rgba(34,197,94,.18));
+  border:1px solid var(--stroke);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25),
+              0 0 0 1px rgba(255,255,255,.06) inset;
 }
 
-/* ------------------------------
-   메인 2단 레이아웃
------------------------------- */
-.main-layout {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;  /* 좌측 입력 / 우측 결과 */
-    gap: 26px;
+.title{font-weight:800; letter-spacing:.08em}
+.subtitle{font-size:12px; color: var(--muted); margin-top:2px}
+
+.actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+/* ===== usage ===== */
+.usage{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  font-size:12px;
+  color: var(--muted);
+}
+.usage .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 10px rgba(34,197,94,.6);
 }
 
-/* 모바일에서는 1단 */
-@media (max-width: 900px) {
-    .main-layout {
-        grid-template-columns: 1fr;
-    }
+/* ===== toggle ===== */
+.toggle input{display:none}
+.toggle .pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  cursor:pointer;
+}
+.toggle input:checked + .pill{
+  color: var(--fg);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.10) inset,
+    0 0 20px var(--glow);
 }
 
-/* ------------------------------
-   카드 공통 스타일
------------------------------- */
-.card {
-    background: rgba(10, 15, 25, 0.85);
-    border-radius: 18px;
-    border: 1px solid rgba(150, 200, 255, 0.2);
-    padding: 24px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+/* ================= LAYOUT ================= */
+.container{
+  max-width: 1200px;
+  margin: 22px auto;
+  padding: 0 16px 30px;
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+@media (max-width: 980px){
+  .container{grid-template-columns: 1fr;}
 }
 
-.card h2 {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
-    color: #eae6dd;
-    border-left: 3px solid #48e0c4;
-    padding-left: 10px;
+/* ================= PANEL ================= */
+.panel{
+  border:1px solid var(--stroke);
+  background: rgba(12,16,48,.55);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
 }
 
-/* ------------------------------
-   입력 폼
------------------------------- */
-.form-row {
-    margin-bottom: 16px;
+.panelHead{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+}
+.panelHead h2{
+  margin:0;
+  font-size:14px;
+  letter-spacing:.06em;
+}
+.hint{font-size:12px; color: var(--muted)}
+
+.input{
+  width:100%;
+  padding: 12px;
+  border-radius: 14px;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.25);
+  color: var(--fg);
+}
+.input:focus{
+  outline:none;
+  box-shadow: 0 0 0 3px rgba(120,88,255,.20);
 }
 
-.form-row label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    color: #ddd3c7;
+/* ===== category ===== */
+.categoryRow{
+  display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;
+}
+.chipRadio input{display:none}
+.chipRadio span{
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  cursor:pointer;
+}
+.chipRadio input:checked + span{
+  color: var(--fg);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.12) inset,
+    0 0 20px var(--glow2);
 }
 
-.form-row input,
-.form-row select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(5,8,12,0.9);
-    color: #fafafa;
-    border: 1px solid rgba(180,220,255,0.35);
+/* =====================================================
+   Spread Selector (FINAL – Clean Version)
+   ===================================================== */
+
+.spreadRow{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+  margin-top:12px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* 개별 스프레드 버튼 */
+.spreadBtn{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:14px;
+  min-height:92px;
+
+  border-radius:16px;
+  border:1px solid var(--stroke);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.06),
+    rgba(0,0,0,.2)
+  );
+
+  color: var(--muted);
+  text-align:left;
+  cursor:pointer;
+
+  position: relative;
+  z-index: 11;
+  pointer-events: auto;
+
+  transition: 
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
+}
+
+/* 내부 텍스트 */
+.spreadBtn b{
+  font-size:14px;
+  color: var(--fg);
+}
+
+.spreadBtn .spreadHint{
+  font-size:12px;
+  color: var(--muted);
+}
+
+/* hover 효과 */
+.spreadBtn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(120,88,255,.18);
+}
+
+/* 선택(active) 상태 */
+.spreadBtn.active{
+  color: var(--fg);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.14) inset,
+    0 0 28px var(--glow);
+}
+
+/* 버튼 내부 요소는 클릭 통과 */
+.spreadBtn *{
+  pointer-events: none;
+}
+
+/* glass / 배경 레이어 클릭 차단 */
+.bg,
+.panel::before,
+.panel::after{
+  pointer-events: none;
+}
+
+/* ===== FINAL CLICK FIX ===== */
+
+/* spread 버튼을 최상위 클릭 레이어로 */
+.spreadRow {
+  position: relative;
+  z-index: 1000;
+}
+
+.spreadBtn {
+  position: relative;
+  z-index: 1001;
+  pointer-events: auto !important;
+}
+
+/* 내부 텍스트는 이벤트 차단 (부모 버튼이 받게) */
+.spreadBtn * {
+  pointer-events: none;
+}
+
+/* 모든 장식용 glass/blur 레이어는 클릭 금지 */
+.bg,
+.panel::before,
+.panel::after,
+.container::before,
+.container::after {
+  pointer-events: none !important;
+}
+
+/* ===== mode ===== */
+.modeRow{
+  display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;
+}
+.radio{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.04);
+  cursor:pointer;
+  color: var(--muted);
+}
+.radio input{accent-color:#7c3aed;}
+.radio:has(input:checked){
+  color: var(--fg);
+  box-shadow:0 0 20px var(--glow2);
+}
+
+/* ===== buttons ===== */
+.ctaRow{display:flex; gap:10px; margin-top:14px}
+.btn{
+  padding:11px 14px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.05);
+  color: var(--fg);
+  cursor:pointer;
+}
+.btn.primary{
+  flex:1;
+  background: linear-gradient(135deg, rgba(120,88,255,.85), rgba(34,197,94,.55));
+  font-weight:800;
+}
+.btn.ghost{background: rgba(255,255,255,.03); color: var(--muted)}
+
+.note{margin-top:12px; font-size:12px; color: var(--muted)}
+.note.warn{
+  color:#fecaca;
+  background: rgba(127,29,29,.25);
+  border:1px solid rgba(239,68,68,.35);
+  border-radius:12px;
+  padding:10px;
+}
+
+/* ================= STAGE ================= */
+.stage{
+  border:1px solid var(--stroke);
+  background: rgba(12,16,48,.35);
+  border-radius:18px;
+  padding:16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.stageHead{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+}
+.stageHead h2{margin:0; font-size:16px}
+
+/* ===== GRID FIX ===== */
+.grid{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:18px;
+}
+
+/* 켈틱 크로스 */
+.grid.celtic{
+  display:grid;
+  grid-template-columns: repeat(4, 160px);
+  grid-template-rows: repeat(4, auto);
+  gap:14px;
+  justify-content:center;
+}
+
+/* ===== card ===== */
+.cardItem{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.18);
+  cursor:pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cardItem:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 34px rgba(120,88,255,.18);
+}
+.cardItem img{
+  width:100%;
+  aspect-ratio:2/3;
+  object-fit:cover;
+}
+.cardItem img.rev{transform: rotate(180deg);}
+.cardLabel{
+  position:absolute;
+  left:10px; right:10px; bottom:10px;
+  background: rgba(0,0,0,.35);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:10px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.tarot{
+  width:180px;
+  perspective:1000px;
+}
+
+.card-inner{
+  position:relative;
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.4,.2,.2,1);
+}
+
+.tarot.flipped .card-inner{
+  transform:rotateY(180deg);
+}
+
+.card-back,
+.card-front{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.card-back{
+  background:linear-gradient(135deg,#1e293b,#020617);
+}
+
+.card-front{
+  transform:rotateY(180deg);
+}
+
+.card-front img{
+  width:100%;
+  display:block;
+}
+
+@keyframes shake {
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(4px)}
+  75%{transform:translateX(-3px)}
+  100%{transform:translateX(0)}
+}
+
+.grid.shake{
+  animation: shake .35s ease;
+}
+
+/* ================= RESULT ================= */
+.result{margin-top:16px}
+.summary{
+  margin-top:10px;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.22);
+  border-radius:16px;
+  padding:14px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+.summary.empty{color: var(--muted)}
+
+.metaRow{
+  display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;
+}
+.metaPill{
+  font-size:11px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.35);
+}
+
+/* ================= MODAL ================= */
+.modal{
+  position:fixed; inset:0;
+  display:grid; place-items:center;
+  background: rgba(0,0,0,.55);
+  z-index:50;
+  padding:18px;
+}
+.modal.hidden{display:none}
+.modalCard{
+  width:min(920px,100%);
+  border-radius:18px;
+  border:1px solid var(--stroke);
+  background: rgba(12,16,48,.92);
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+.modalClose{
+  position:absolute; right:10px; top:8px;
+  width:44px; height:44px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background: rgba(255,255,255,.05);
+  color: var(--fg);
+  font-size:22px;
+  cursor:pointer;
+}
+.modalBody{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:14px;
+  padding:16px;
+}
+@media (max-width:820px){
+  .modalBody{grid-template-columns:1fr;}
+}
+.modalLeft img{
+  width:100%;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+}
+.kicker{font-size:12px; color: var(--muted)}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  padding:6px 8px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.25);
+  font-size:12px;
+}
+.modalText{line-height:1.6}
+
+/* ================= CELTIC CROSS ================= */
+.grid.celtic{
+  display:grid;
+  grid-template-columns: repeat(4, 160px);
+  grid-template-rows: repeat(4, auto);
+  gap:14px;
+  justify-content:center;
+  align-items:center;
+}
+
+/* 중앙 십자 (1~6) */
+.grid.celtic .pos-1{ grid-column:2; grid-row:2; } /* 현재 */
+.grid.celtic .pos-2{ grid-column:2; grid-row:2; transform: rotate(90deg);} /* 장애 */
+.grid.celtic .pos-3{ grid-column:2; grid-row:3; } /* 근본 */
+.grid.celtic .pos-4{ grid-column:1; grid-row:2; } /* 과거 */
+.grid.celtic .pos-5{ grid-column:2; grid-row:1; } /* 목표 */
+.grid.celtic .pos-6{ grid-column:3; grid-row:2; } /* 가까운 미래 */
+
+/* 우측 기둥 (7~10) */
+.grid.celtic .pos-7{ grid-column:4; grid-row:1; }
+.grid.celtic .pos-8{ grid-column:4; grid-row:2; }
+.grid.celtic .pos-9{ grid-column:4; grid-row:3; }
+.grid.celtic .pos-10{ grid-column:4; grid-row:4; }
+
+/* 켈틱 크로스 카드 크기 조정 */
+.grid.celtic .cardItem{
+  width:160px;
+}
+
+/* 모바일 대응 */
+@media (max-width: 720px){
+  .grid.celtic{
+    grid-template-columns: repeat(2, 150px);
+    grid-template-rows: auto;
+  }
+  .grid.celtic .cardItem{
+    grid-column:auto !important;
+    grid-row:auto !important;
+    width:150px;
+  }
 }
 
 
-/* ------------------------------
-   🔥 라디오 버튼 — 고급 스타일
------------------------------- */
 
-.radio-frame {
-    display: flex;
-    gap: 36px;
-    padding: 14px 18px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
+/* ===== Flip Card UI (Back -> Front) ===== */
+.tarot{
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border:1px solid var(--stroke);
+  background: rgba(0,0,0,.18);
+  cursor:pointer;
+  transform-style: preserve-3d;
 }
 
-.radio-block {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
+.tarot.disabled{ cursor: default; opacity: .9; }
+
+.tarot .card-inner{
+  position: relative;
+  width:100%;
+  height:100%;
+  transform-style: preserve-3d;
+  transition: transform .65s cubic-bezier(.4,.2,.2,1);
 }
 
-.block-title {
-    font-weight: 600;
-    color: #e8e3d8;
-    margin-bottom: 6px;
-    letter-spacing: 0.04em;
+.tarot.flipped .card-inner{
+  transform: rotateY(180deg);
 }
 
-/* 라디오 버튼 줄 */
-.radio-option {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    padding: 6px 0;
+.tarot .card-face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  border-radius: 16px;
+  overflow:hidden;
 }
 
-/* 라디오 버튼 숨기고 커스텀 UI 사용 */
-.radio-option input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(180,220,255,0.45);
-    border-radius: 50%;
-    background: rgba(5,12,18,0.7);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    position: relative;
+.tarot .card-back{
+  display:grid;
+  place-items:center;
+  background: rgba(0,0,0,.25);
 }
 
-/* 선택 시 점 + 글로우 */
-.radio-option input[type="radio"]:checked {
-    border-color: #48e0c4;
-    box-shadow: 0 0 8px #48e0c48f;
+.tarot .card-back img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  filter: drop-shadow(0 0 16px rgba(120,88,255,.15));
 }
 
-.radio-option input[type="radio"]:checked::before {
-    content: "";
-    position: absolute;
-    inset: 4px;
-    background: #48e0c4;
-    border-radius: 50%;
+.tarot .card-front{
+  transform: rotateY(180deg);
+  background: rgba(0,0,0,.12);
 }
 
-/* 텍스트 */
-.radio-option label {
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #f2efe7;
-    opacity: 0.92;
+.tarot .card-front img{
+  width:100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display:block;
+}
+
+.tarot .label{
+  position:absolute;
+  left:10px; right:10px; bottom:10px;
+  background: rgba(0,0,0,.35);
+  border:1px solid var(--stroke);
+  border-radius: 12px;
+  padding: 10px;
+  backdrop-filter: blur(6px);
+}
+
+.tarot .label .name{font-weight:800; font-size:13px}
+.tarot .label .desc{font-size:12px; color: var(--muted); margin-top:4px; min-height: 20px}
+
+/*-- 카드 뽑기 후, 아직 뒤집기 전 안내 뱃지 --*/
+.tarot .tapHint{
+  position:absolute;
+  top:10px; left:10px;
+  font-size:11px;
+  padding:6px 8px;
+  border-radius:999px;
+  background: rgba(0,0,0,.35);
+  border: 1px solid var(--stroke);
+  color: var(--fg);
+} 
+
+
+/* ===== Tarot Card Flip Core ===== */
+
+.tarot {
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  transform-style: preserve-3d;
+  transition: transform 0.7s ease;
+}
+
+.tarot.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.card-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-back {
+  background: rgba(0,0,0,.25);
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  background: rgba(0,0,0,.25);
+}
+
+.card-front .label {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0,0,0,.55);
+  border-radius: 10px;
+  padding: 6px 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ===== Modal Compact (1/4 Size) ===== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: transparent;          /* ❌ 반투명 제거 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modalCard {
+  width: min(520px, 90vw);           /* ⬅️ 핵심: 폭 대폭 축소 */
+  max-height: 70vh;                  /* ⬅️ 높이도 줄임 */
+  background: rgba(10, 14, 38, 1);    /* 완전 불투명 */
+  border-radius: 14px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+/* 닫기 버튼 */
+.modalClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===== Body Layout ===== */
+
+.modalBody {
+  display: grid;
+  grid-template-columns: 180px 1fr;  /* ⬅️ 이미지 영역 축소 */
+  gap: 12px;
+}
+
+/* 모바일 */
+@media (max-width: 640px) {
+  .modalBody {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Left (Image) ===== */
+
+.modalLeft img {
+  width: 100%;
+  max-height: 260px;                 /* ⬅️ 카드 이미지 제한 */
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* ===== Right (Text) ===== */
+
+.modalRight {
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* 위치/제목 */
+#modalPos {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+#modalTitle {
+  font-size: 16px;                   /* ⬅️ 제목 축소 */
+  margin-bottom: 6px;
+}
+
+/* 키워드 칩 */
+#modalChips {
+  margin-bottom: 8px;
+}
+
+#modalChips .chip {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 999px;
+}
+
+/* 설명 텍스트 */
+.modalText {
+  font-size: 12.5px;                 /* ⬅️ 본문 글씨 축소 */
+  line-height: 1.55;
+  color: var(--fg);
+  white-space: pre-line;
 }
 
 
-/* 🔹 생년월일 + 태어난 시각 가로 배치 */
-.date-time-row {
-    display: flex;
-    gap: 20px;
-    align-items: flex-end;
+.card-front img.rev{ transform: rotate(180deg); }
+
+
+/* ===== 종합해설 상세 옵션 ===== */
+.long-meaning-option {
+  margin-top: 10px;
 }
 
-.date-col,
-.time-col {
-    flex: 1;
+.long-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
 }
 
-/* 입력 박스 통일 스타일 */
-.date-col input,
-.time-col select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(180,220,255,0.35);
-    background: rgba(5,8,15,0.9);
-    color: #fff;
-}
-
-@media (max-width: 700px) {
-    .radio-frame {
-        flex-direction: column;
-    }
-    .date-time-row {
-        flex-direction: column;
-    }
-}
-
-/* 이름 + 한자 이름 한 줄 배치 */
-.name-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-@media (max-width: 600px) {
-    .name-row {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* 모바일에서는 세로 배치 
-@media (max-width: 600px) {
-    .two-columns {
-        flex-direction: column;
-    }
-}
-*/
-
-/* 추가 질문 박스 */
-.question-box {
-    background: rgba(255,255,255,0.12);
-    padding: 16px;
-    border-radius: 12px;
-    margin-top: 20px;
-}
-
-.question-textarea {
-    width: 100%;
-    min-height: 150px;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 1rem;
-    resize: vertical;
-}
-
-.hint {
-    font-size: 0.85rem;
-    opacity: 0.8;
-    margin-top: 8px;
-}
-
-/* 제출 버튼 */
-.submit-btn {
-    margin-top: 18px;
-    width: 100%;
-    padding: 14px;
-    font-weight: bold;
-    font-size: 1rem;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #48e0c4, #0b9982);
-    color: #031012;
-    border: none;
-    cursor: pointer;
-}
-
-/* ------------------------------
-   결과창 (오른쪽)
------------------------------- */
-.result-wrapper {
-    grid-column: 2; /* 오른쪽에 배치 */
-}
-
-/* 모바일에서는 아래로 */
-@media (max-width: 900px) {
-    .result-wrapper {
-        grid-column: 1;
-    }
-}
-
-/* 결과 박스 배경 이미지 */
-.result-box {
-    background: 
-        linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), 
-        url("/static/saju_bg_bw.png") center/cover no-repeat;
-    color: #000;
-    padding: 28px;
-    border-radius: 12px;
-    line-height: 1.7;
-    overflow-wrap: break-word;
-    white-space: pre-line;
-    min-height: 260px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-}
-
-/* PDF 버튼 */
-.pdf-form {
-    margin-top: 12px;
-    text-align: right;
-}
-
-.pdf-btn {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    border-radius: 999px;
-    cursor: pointer;
-    border: 1px solid rgba(120,255,220,0.3);
-    background: rgba(10,20,25,0.9);
-    color: #e8f8f4;
-}
-
-.pdf-btn:hover {
-    background: rgba(72,224,196,0.18);
-}
-
-.loading {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    text-align: center;
-    font-size: 1.1rem;
-    animation: blink 1.2s infinite;
-}
-
-@keyframes blink {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
-}
-
-.bg-overlay {
-    position: fixed;
-    inset: 0;
-
-    background:
-        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
-        url("/data/images/bg_bw.jpg") center center / cover no-repeat;
-
-    opacity: 0.55;
-    z-index: -2;
+.long-toggle input[type="checkbox"] {
+  accent-color: #7c7cff;
+  width: 14px;
+  height: 14px;
 }
 
 
+/* ================= FOOTER ================= */
+.footer{
+  margin-top:40px;
+  padding:24px 10px;
+  text-align:center;
+  font-size:12px;
+  color: var(--muted);
+}
+.footerInner{
+  display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+}
+.footer .sep{opacity:.5}

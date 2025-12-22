@@ -74,18 +74,19 @@ export async function onRequest(context) {
 
     const data = await res.json();
 
-    // 🔥 핵심
-    draw.ai_result = data.result;
+// 🔥 그대로 전달 (구조 유지)
+return new Response(
+  JSON.stringify({
+    card_comments: data.card_comments || [],
+    overall_comment: data.overall_comment || {},
+    result: data.result || "",   // 문자열 버전도 대비
+  }),
+  {
+    status: 200,
+    headers: corsHeaders,
+  }
+);
 
-    return new Response(
-      JSON.stringify({
-        result: data.result, // 🔥 Render에서 내려준 결과 그대로
-      }),
-      {
-        status: 200,
-        headers: corsHeaders,
-      }
-    );
 
   } catch (err) {
     return new Response(
