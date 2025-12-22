@@ -226,6 +226,13 @@ function renderBackCards(cards) {
         if (summary) {
           summary.classList.remove("empty");
           summary.textContent = buildRichSummary(lastDraw);
+
+          // 🔽 🔽 🔽 핵심 추가 🔽 🔽 🔽
+          // 결과 영역을 미리 넓혀서 AI 결과가 안 가려지게 함
+          summary.style.maxHeight = "none";
+          summary.style.minHeight = "480px";   // 약 10줄 이상 공간 확보
+          summary.style.paddingBottom = "120px";
+          summary.scrollIntoView({ behavior: "smooth", block: "start" });
         }
 
         // OpenAI 모드면 여기서 AI 호출 (한 번만)
