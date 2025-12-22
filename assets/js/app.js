@@ -391,22 +391,26 @@ function buildRichSummary(draw) {
 
   lines.push("타로는 미래를 단정하지 않습니다. 지금의 흐름을 참고해, 당신에게 가장 맞는 선택을 해보세요.");
 
-  // ✅ AI 결과 출력: 텍스트(result) 또는 overall_comment 모두 지원
-  if (draw.ai) {
+  // ✅ OpenAI 리딩 결과 출력 (최종)
+if (draw.ai) {
   lines.push("");
   lines.push("**[OpenAI 리딩] 종합 코멘트**");
+  lines.push("");
 
-  const o = draw.ai.overall_comment || {};
+  // 1순위: result (지금 서버가 주는 값)
+  if (draw.ai.result) {
+    lines.push(safeText(draw.ai.result));
+  }
 
-  if (o.summary || o.advice || o.closing) {
+  // 2순위: 구조형 응답 (추후 확장 대비)
+  else if (draw.ai.overall_comment) {
+    const o = draw.ai.overall_comment;
     if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
     if (o.advice)  lines.push(`- 조언: ${safeText(o.advice)}`);
     if (o.closing) lines.push(safeText(o.closing));
-  } else if (draw.ai.result) {
-    lines.push("");
-    lines.push(safeText(draw.ai.result));
   }
 }
+
 
   return lines.join("\n");
 }
