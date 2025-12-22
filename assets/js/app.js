@@ -479,10 +479,18 @@ async function runOpenAIReadingIfNeeded() {
 
     // ✅ 핵심: AI 결과를 lastDraw에 저장 (여기가 빠져있어서 표시가 안 됐던 것)
     lastDraw.ai = {
-      card_comments: aiResult.card_comments || [],
-      overall_comment: aiResult.overall_comment || {},
-      result: aiResult.result || "",
+    card_comments: aiResult.card_comments || [],
+
+    // ✅ overall_comment가 없고 result만 오는 경우 대비
+    overall_comment: aiResult.overall_comment
+      || (aiResult.result
+          ? { summary: aiResult.result }
+          : {}),
+
+    // 문자열 결과도 보존
+    result: aiResult.result || "",
     };
+
 
     if (loadingEl) loadingEl.classList.add("hidden");
     summaryEl.textContent = buildRichSummary(lastDraw);
