@@ -393,20 +393,20 @@ function buildRichSummary(draw) {
 
   // ✅ AI 결과 출력: 텍스트(result) 또는 overall_comment 모두 지원
   if (draw.ai) {
-    if (draw.ai.result) {
-      lines.push("");
-      lines.push("**[AI 종합 리딩]**");
-      lines.push("");
-      lines.push(safeText(draw.ai.result));
-    } else if (draw.ai.overall_comment) {
-      const o = draw.ai.overall_comment;
-      lines.push("");
-      lines.push("**[AI 종합 리딩]**");
-      if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
-      if (o.advice) lines.push(`- 조언: ${safeText(o.advice)}`);
-      if (o.closing) lines.push(safeText(o.closing));
-    }
+  lines.push("");
+  lines.push("**[OpenAI 리딩] 종합 코멘트**");
+
+  const o = draw.ai.overall_comment || {};
+
+  if (o.summary || o.advice || o.closing) {
+    if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
+    if (o.advice)  lines.push(`- 조언: ${safeText(o.advice)}`);
+    if (o.closing) lines.push(safeText(o.closing));
+  } else if (draw.ai.result) {
+    lines.push("");
+    lines.push(safeText(draw.ai.result));
   }
+}
 
   return lines.join("\n");
 }
@@ -428,84 +428,63 @@ function topN(arr, n) {
    OpenAI Reading (after all revealed)
 ------------------------- */
 async function runOpenAIReadingIfNeeded() {
-  if (!lastDraw || aiLoading) return;
-  if (lastDraw.ai) return; // 이미 AI 결과 있음
+  if (!lastDraw || aiLoading || lastDraw.ai) return;
   aiLoading = true;
 
-  const summaryEl = $("#summary");
-  const baseSummaryText = buildRichSummary({ ...lastDraw, ai: null }); // AI 없이 요약 생성
+  const summaryEl = document.getElementById("summary");
+  const loadingEl = document.getElementById("aiLoading");
+
+  const baseSummaryText = buildRichSummary({ ...lastDraw, ai: null });
 
   try {
+    // 🔮 AI 로딩 표시
+    if (loadingEl) loadingEl.classList.remove("hidden");
     if (summaryEl) {
-      summaryEl.classList.remove("empty");
-      summaryEl.textContent = baseSummaryText + "\n\n(AI 리딩 중...)";
+      summaryEl.textContent = baseSummaryText + "\n\n(OpenAI 리딩 중...)";
     }
 
-    const endpoint = "/api/tarot_ai";
-
-    const payload = {
-      mode: "openai",
-      spread: lastDraw.spread,
-      useLong: useLongMeaningEnabled(),
-      summaryText: baseSummaryText,
-      cards: lastDraw.cards.map((c, i) => ({
-        index: i,
-        id: c.id,
-        name_kr: c.name_kr,
-        name_en: c.name_en,
-        position_label: c.position_label,
-        is_reversed: !!c.is_reversed,
-        keywords: (getMeaningObj(c).keywords || []),
-        meaning_short_kr: getMeaningObj(c).meaning_short_kr || getMeaningObj(c).meaning || "",
-        meaning_long_kr: getMeaningObj(c).meaning_long_kr || "",
-      })),
-    };
-
-    const loadingEl = document.getElementById("aiLoading");
-    if (loadingEl) loadingEl.classList.remove("hidden");
-
-    const res = await fetch(endpoint, {
+    const res = await fetch("/api/tarot_ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        mode: "openai",
+        spread: lastDraw.spread,
+        summaryText: baseSummaryText,
+        cards: lastDraw.cards.map((c, i) => ({
+          index: i,
+          name_kr: c.name_kr,
+          name_en: c.name_en,
+          position_label: c.position_label,
+          is_reversed: c.is_reversed,
+        })),
+      }),
     });
 
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      throw new Error(`AI 호출 실패: ${res.status} ${t}`);
+      throw new Error(`AI 호출 실패: ${res.status}`);
     }
 
     const aiResult = await res.json();
 
-    // ✅ 핵심: AI 결과를 lastDraw에 저장 (여기가 빠져있어서 표시가 안 됐던 것)
+    /* ✅ 1️⃣ 여기서 AI 결과를 lastDraw에 저장 */
     lastDraw.ai = {
-    card_comments: aiResult.card_comments || [],
-
-    // ✅ overall_comment가 없고 result만 오는 경우 대비
-    overall_comment: aiResult.overall_comment
-      || (aiResult.result
-          ? { summary: aiResult.result }
-          : {}),
-
-    // 문자열 결과도 보존
-    result: aiResult.result || "",
+      card_comments: aiResult.card_comments || [],
+      overall_comment: aiResult.overall_comment
+        || (aiResult.result ? { summary: aiResult.result } : {}),
+      result: aiResult.result || "",
     };
 
-
-    if (loadingEl) loadingEl.classList.add("hidden");
-    summaryEl.textContent = buildRichSummary(lastDraw);
-
-   
-    // ✅ 종합 패널 갱신
+    /* ✅ 2️⃣ 그리고 “이 줄 하나”로 화면을 다시 그림 */
     if (summaryEl) {
       summaryEl.textContent = buildRichSummary(lastDraw);
     }
+
   } catch (e) {
     console.error(e);
     if (summaryEl) {
       summaryEl.textContent =
         baseSummaryText +
-        "\n\n(AI 리딩 실패. 로컬 해설로 표시됩니다.)\n" +
+        "\n\n(OpenAI 리딩 실패. 로컬 해설로 표시됩니다.)\n" +
         "오류: " + (e?.message || e);
     }
   } finally {
@@ -513,10 +492,6 @@ async function runOpenAIReadingIfNeeded() {
     if (loadingEl) loadingEl.classList.add("hidden");
   }
 }
-
-
-
-
 
 
 /* ------------------------
