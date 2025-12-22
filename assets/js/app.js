@@ -382,11 +382,6 @@ function buildRichSummary(draw) {
   const topKW = topN(allKW, 6);
   const topRev = topN(revKW, 4);
 
-  lines.push("**전체 흐름을 종합해보면**");
-  lines.push("이번 리딩은 단일한 사건보다는, 시간의 흐름 속에서 점진적으로 전개되는 상황을 보여줍니다.");
-  lines.push("현재의 선택과 태도가 앞으로의 방향에 중요한 영향을 미치며, 카드들은 ‘서두르기보다는 흐름을 읽고 대응하라’는 메시지를 반복해서 전하고 있습니다.");
-  lines.push("");
-
   lines.push("**전체 흐름 요약**");
   if (topKW.length) lines.push(`- 핵심 키워드: ${topKW.join(" · ")}`);
   if (topRev.length) lines.push(`- 주의(역방향) 포인트: ${topRev.join(" · ")}`);
@@ -400,15 +395,13 @@ function buildRichSummary(draw) {
 
   lines.push("타로는 미래를 단정하지 않습니다. 지금의 흐름을 참고해, 당신에게 가장 맞는 선택을 해보세요.");
 
-  // ✅ AI 종합 코멘트가 있으면 아래에 붙여줌
-  if (draw.ai?.overall_comment) {
-    const o = draw.ai.overall_comment;
-    lines.push("");
-    lines.push("**[OpenAI 리딩] 종합 코멘트**");
-    if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
-    if (o.advice) lines.push(`- 조언: ${safeText(o.advice)}`);
-    if (o.closing) lines.push(safeText(o.closing));
-  }
+// ✅ Render API에서 내려온 AI 리딩 텍스트 출력
+if (draw.ai_result) {
+  lines.push("");
+  lines.push("**[AI 종합 리딩]**");
+  lines.push("");
+  lines.push(safeText(draw.ai_result));
+}
 
   return lines.join("\n");
 }
