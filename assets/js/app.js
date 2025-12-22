@@ -11,13 +11,13 @@
 
 let CARDS = [];
 let selectedSpread = 3;
-let lastDraw = null; // { spread:number, cards:[...], ai:{card_comments:[], overall_comment:{}} }
+let lastDraw = null; // { spread:number, cards:[...], ai:{card_comments:[], overall_comment:{}, result?:""} }
 let revealedCount = 0;
 let aiLoading = false;
 
 const SPREADS = {
   3: { name: "과거·현재·미래 (3장)", positions: ["과거", "현재", "미래"] },
-  5: { name: "5장 리딩", positions: ["상황", "장애/과제", "조언", "결과", "숨은 영향"] },
+  5: { name: "5장 리딩", positions: ["상황", "장애/도전", "조언", "결과", "숨은 영향"] },
   10: {
     name: "켈틱 크로스 (10장)",
     positions: [
@@ -57,7 +57,6 @@ function revEnabled() {
 }
 function useLongMeaningEnabled() {
   const el = document.querySelector("#useLongMeaning");
-  // ✅ 디폴트로 long 사용 원하면 HTML에서 checked 주는 게 가장 확실
   return el ? !!el.checked : true;
 }
 
@@ -99,8 +98,6 @@ function initSpreadButtons() {
 
       const grid = $("#grid");
       if (grid) grid.classList.toggle("celtic", selectedSpread === 10);
-
-      console.log("SPREAD SELECTED:", selectedSpread);
     });
   });
 
@@ -160,7 +157,7 @@ function drawCards() {
   lastDraw = {
     spread: selectedSpread,
     cards: cardsWithMeta,
-    ai: null, // { card_comments:[], overall_comment:{} }
+    ai: null, // 나중에 {card_comments, overall_comment, result?}
   };
 
   renderBackCards(cardsWithMeta);
@@ -277,7 +274,6 @@ function initModalEvents() {
 function getAICardComment(idx) {
   const list = lastDraw?.ai?.card_comments;
   if (!Array.isArray(list)) return null;
-  // 서버가 index를 0-based로 보내도록 했다는 전제
   return list.find((x) => Number(x.index) === Number(idx)) || null;
 }
 
@@ -299,7 +295,7 @@ function openModal(card, idx) {
     $("#modalTitle").textContent = `${safeText(card.name_kr)} (${safeText(card.name_en)})`;
   }
 
-  // ✅ short + long + (AI 코멘트) 표시
+  // short + long + (AI 코멘트) 표시
   const m = getMeaningObj(card);
   const shortText = safeText(m.meaning_short_kr || m.meaning || "");
   const longText = safeText(m.meaning_long_kr || "");
@@ -395,13 +391,22 @@ function buildRichSummary(draw) {
 
   lines.push("타로는 미래를 단정하지 않습니다. 지금의 흐름을 참고해, 당신에게 가장 맞는 선택을 해보세요.");
 
-// ✅ Render API에서 내려온 AI 리딩 텍스트 출력
-if (draw.ai_result) {
-  lines.push("");
-  lines.push("**[AI 종합 리딩]**");
-  lines.push("");
-  lines.push(safeText(draw.ai_result));
-}
+  // ✅ AI 결과 출력: 텍스트(result) 또는 overall_comment 모두 지원
+  if (draw.ai) {
+    if (draw.ai.result) {
+      lines.push("");
+      lines.push("**[AI 종합 리딩]**");
+      lines.push("");
+      lines.push(safeText(draw.ai.result));
+    } else if (draw.ai.overall_comment) {
+      const o = draw.ai.overall_comment;
+      lines.push("");
+      lines.push("**[AI 종합 리딩]**");
+      if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
+      if (o.advice) lines.push(`- 조언: ${safeText(o.advice)}`);
+      if (o.closing) lines.push(safeText(o.closing));
+    }
+  }
 
   return lines.join("\n");
 }
@@ -433,20 +438,16 @@ async function runOpenAIReadingIfNeeded() {
   try {
     if (summaryEl) {
       summaryEl.classList.remove("empty");
-      summaryEl.textContent = baseSummaryText + "\n\n(OpenAI 리딩 중...)";
+      summaryEl.textContent = baseSummaryText + "\n\n(AI 리딩 중...)";
     }
 
-    // ✅ Netlify 전용  Functions 기본 경로
-    //const endpoint = "/.functions/tarot_ai";
-
-    // ✅ Cloudflare Pages 전용
     const endpoint = "/api/tarot_ai";
 
     const payload = {
       mode: "openai",
       spread: lastDraw.spread,
       useLong: useLongMeaningEnabled(),
-      summaryText: baseSummaryText, // ← 네가 원한 “요약 프롬프트 그대로 넘기기”
+      summaryText: baseSummaryText,
       cards: lastDraw.cards.map((c, i) => ({
         index: i,
         id: c.id,
@@ -473,17 +474,14 @@ async function runOpenAIReadingIfNeeded() {
 
     const aiResult = await res.json();
 
-    // ✅ Render / OpenAI 종합 코멘트
-    if (draw.ai?.overall_comment) {
-      const o = draw.ai.overall_comment;
-      lines.push("");
-      lines.push("**[AI 종합 리딩]**");
-      if (o.summary) lines.push(`- 전체 흐름: ${safeText(o.summary)}`);
-      if (o.advice) lines.push(`- 조언: ${safeText(o.advice)}`);
-      if (o.closing) lines.push(safeText(o.closing));
-    }
+    // ✅ 핵심: AI 결과를 lastDraw에 저장 (여기가 빠져있어서 표시가 안 됐던 것)
+    lastDraw.ai = {
+      card_comments: aiResult.card_comments || [],
+      overall_comment: aiResult.overall_comment || {},
+      result: aiResult.result || "",
+    };
 
-    // ✅ 종합 패널 갱신 (AI 종합 코멘트 포함)
+    // ✅ 종합 패널 갱신
     if (summaryEl) {
       summaryEl.textContent = buildRichSummary(lastDraw);
     }
@@ -492,7 +490,7 @@ async function runOpenAIReadingIfNeeded() {
     if (summaryEl) {
       summaryEl.textContent =
         baseSummaryText +
-        "\n\n(OpenAI 리딩 실패. 로컬 해설로 표시됩니다.)\n" +
+        "\n\n(AI 리딩 실패. 로컬 해설로 표시됩니다.)\n" +
         "오류: " + (e?.message || e);
     }
   } finally {
