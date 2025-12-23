@@ -105,7 +105,6 @@ function updateOpenAIUsageUI() {
 }
 
 
-
 /* ------------------------
    Load cards.json
 ------------------------- */
