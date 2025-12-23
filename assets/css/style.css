@@ -852,6 +852,11 @@ body{
   color: #ff8c8c;
 }
 
+.usage-note {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 6px;
+}
 
 /* ================= FOOTER ================= */
 .footer{
