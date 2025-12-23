@@ -1,162 +1,163 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>사주분석 AI 서비스 (명리학·주역·성명학)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- ✅ Cloudflare Pages용 CSS 경로 -->
-    <link rel="stylesheet" href="/assets/css/style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tarot 500</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
-
 <body>
+  <div class="bg"></div>
 
-<!-- 배경 -->
-<div class="bg-overlay"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🔮</div>
+      <div>
+        <div class="title">TARO 500</div>
+        <div class="subtitle">Rider–Waite Remaster • 78 Cards</div>
+      </div>
+    </div>
+    <div class="actions">
+      <label class="toggle">
+        <input id="revToggle" type="checkbox" checked />
+        <span class="pill">역방향 포함</span>
+      </label>
+      <button id="shuffleBtn" class="btn ghost">셔플</button>
+    </div>
+  </header>
 
-<div class="container">
+  <main class="container">
+    <!-- LEFT -->
+    <section class="panel">
+      <div class="panelHead">
+        <h2>질문</h2>
+        <div class="hint">구체적일수록 종합해설이 좋아져요</div>
+      </div>
+      <input id="question" class="input"
+        placeholder="이번에 퇴사하는데 내년 2월엔 난 어떻게 될까?" />
 
-    <!-- 헤더 -->
-    <header class="header">
-        <h1>명리학과 주역 성명학으로 보는 심층 AI 사주 서비스</h1>
-        <p class="subtitle">생년월일과 이름으로 보는 운명의 흐름</p>
-    </header>
+      <div class="panelHead" style="margin-top:14px">
+        <h2>질문 유형</h2>
+      </div>
+      <div class="categoryRow">
+        <label class="chipRadio">
+          <input type="radio" name="category" checked><span>종합</span>
+        </label>
+        <label class="chipRadio">
+          <input type="radio" name="category"><span>연애</span>
+        </label>
+        <label class="chipRadio">
+          <input type="radio" name="category"><span>직업</span>
+        </label>
+        <label class="chipRadio">
+          <input type="radio" name="category"><span>금전</span>
+        </label>
+      </div>
 
-    <!-- 전체 레이아웃 -->
-    <main class="main-layout">
+<div class="panelHead" style="margin-top:14px">
+        <h2>스프레드 선택</h2>
+        <div class="hint">3장/5장/켈틱 크로스(10장)</div>
+      </div>
 
-        <!-- 왼쪽 입력 카드 -->
-        <section class="card input-card">
-            <h2>기본 정보 입력</h2>
+      <div class="spreadRow" id="spreadRow">
 
-            <!-- 이름 / 한자 이름 같은 줄 -->
-            <div class="form-row name-row">
-                <div class="name-col">
-                    <label for="name">이름 (한글)</label>
-                    <input type="text" id="name" required>
-                </div>
+        <button class="spreadBtn active" data-spread="3">
+            <b>과거·현재·미래 (3장)</b>
+            <span class="spreadHint">과거 · 현재 · 미래</span>
+        </button>
 
-                <div class="name-col">
-                    <label for="name_hanja">이름 (한자, 선택)</label>
-                    <input type="text" id="name_hanja">
-                </div>
-            </div>
+        <button class="spreadBtn" data-spread="5">
+            <b>5장 리딩</b>
+            <span class="spreadHint">상황 · 장애 · 조언 · 결과 · 영향</span>
+        </button>
 
-            <!-- 성별 / 달력 -->
-            <div class="radio-frame">
+        <button class="spreadBtn" data-spread="10">
+            <b>켈틱 크로스 (10장)</b>
+            <span class="spreadHint">상황 전체를 깊이 분석</span>
+        </button>
 
-                <div class="radio-block">
-                    <div class="block-title">성별</div>
+      </div>
 
-                    <label class="radio-option">
-                        <input type="radio" name="gender" value="남자" checked>
-                        <span>남자</span>
-                    </label>
+      <!-- 종합해설 상세 옵션 -->
+      <div class="long-meaning-option">
+        <label class="long-toggle">
+          <input type="checkbox" id="useLongMeaning" checked>
+          <span>카드 상세해설 포함</span>
+        </label>
+      </div>
+      
+      <div class="panelHead" style="margin-top:14px">
+        <h2>종합해설</h2>
+        <div class="hint">로컬(무료) 또는 OpenAI(키 있으면)로 더 깊게</div>
+      </div>
 
-                    <label class="radio-option">
-                        <input type="radio" name="gender" value="여자">
-                        <span>여자</span>
-                    </label>
-                </div>
+      <div class="modeRow" role="radiogroup" aria-label="해설 모드">
+        <label class="radio">
+          <input type="radio" name="mode" value="auto" checked>
+          <span>자동</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="local">
+          <span>로컬</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="mode" value="openai">
+          <span>OpenAI</span>
+        </label>
+      </div>
+       <!-- OpenAI Usage Note 3회이상 호출시 제어 -->
+      <div id="openaiUsageNote" class="note hidden"></div>
 
-                <div class="radio-block">
-                    <div class="block-title">달력 방식</div>
+      <div class="ctaRow">
+        <button id="drawBtn" type="button" class="btn primary">카드 뽑기</button>
+        <button id="clearBtn" class="btn">초기화</button>
+      </div>
+    </section>
 
-                    <label class="radio-option">
-                        <input type="radio" name="date_type" value="양력" checked>
-                        <span>양력</span>
-                    </label>
+    <!-- RIGHT -->
+    <section class="stage">
+      <div class="stageHead">
+        <h2 id="spreadTitle"></h2>
+        <div id="spreadDesc" class="hint"></div>
+      </div>
 
-                    <label class="radio-option">
-                        <input type="radio" name="date_type" value="음력">
-                        <span>음력</span>
-                    </label>
-                </div>
+      <div id="grid" class="grid"></div>
 
-            </div>
+      <section class="result">
+        <div class="resultHead">
+          <h2>종합해설</h2>
+          <div id="modeUsed" class="hint"></div>
+        </div>
+        <div id="summary" class="summary empty">
+          아직 카드가 없어요 ✨
+          <div id="aiLoading" class="ai-loading hidden">
+            🔮 AI 리딩 중입니다… 잠시만 기다려주세요
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
 
-            <!-- 생년월일 / 태어난 시각 -->
-            <div class="form-row date-time-row">
+  <!-- MODAL -->
+<div id="modal" class="modal hidden">
+  <div class="modalCard">
+    <button class="modalClose" id="modalClose">×</button>
 
-                <div class="date-col">
-                    <label for="birthdate">생년월일</label>
-                    <input type="text"
-                           id="birthdate"
-                           placeholder="YYYY-MM-DD"
-                           maxlength="10">
-                </div>
+    <div class="modalBody">
+      <div class="modalLeft">
+        <img id="modalImg" alt="tarot card">
+      </div>
 
-                <div class="time-col">
-                    <label for="birthtime">태어난 시각</label>
-                    <select id="birthtime">
-                        <option value="">모름 / 알 수 없음</option>
-                        <option value="00:00">00시</option>
-                        <option value="01:00">01시</option>
-                        <option value="02:00">02시</option>
-                        <option value="03:00">03시</option>
-                        <option value="04:00">04시</option>
-                        <option value="05:00">05시</option>
-                        <option value="06:00">06시</option>
-                        <option value="07:00">07시</option>
-                        <option value="08:00">08시</option>
-                        <option value="09:00">09시</option>
-                        <option value="10:00">10시</option>
-                        <option value="11:00">11시</option>
-                        <option value="12:00">12시</option>
-                        <option value="13:00">13시</option>
-                        <option value="14:00">14시</option>
-                        <option value="15:00">15시</option>
-                        <option value="16:00">16시</option>
-                        <option value="17:00">17시</option>
-                        <option value="18:00">18시</option>
-                        <option value="19:00">19시</option>
-                        <option value="20:00">20시</option>
-                        <option value="21:00">21시</option>
-                        <option value="22:00">22시</option>
-                        <option value="23:00">23시</option>
-                    </select>
-                </div>
-
-            </div>
-
-            <!-- 추가 질문 -->
-            <div class="question-box">
-                <label for="followup" class="question-label">추가 질문 (선택)</label>
-                <textarea id="followup"
-                          class="question-textarea"
-                          placeholder="예: 앞으로 2~3년의 재물운과 건강 흐름이 궁금합니다."></textarea>
-                <div class="hint">※ 추가 질문을 넣으면 맞춤 해설이 강화됩니다.</div>
-            </div>
-
-            <!-- 로딩 -->
-            <div id="loading" class="loading" style="display:none;">
-                🔮 사주 해석 중입니다… 잠시만 기다려주세요...
-            </div>
-
-            <!-- 버튼 -->
-            <button id="submitBtn" type="button" class="submit-btn">사주 보기</button> 
-
-        </section>
-
-        <!-- 오른쪽 결과 카드 -->
-        <section class="card result-wrapper" id="resultSection" style="display:none;">
-            <h2>🔮 사주 풀이 결과</h2>
-            <div class="result-box" id="resultBox"></div>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <p>※ 본 해석은 참고용이며 중요한 결정의 절대 기준이 아닙니다.</p>
-    </footer>
-
+      <div class="modalRight">
+        <div class="kicker" id="modalPos"></div>
+        <h3 id="modalTitle"></h3>
+        <p class="modalText" id="modalText"></p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ✅ JS -->
-<script type="module" src="/assets/js/app.js"></script>
+<script src="/assets/js/app.js"></script>
 
 </body>
 </html>
