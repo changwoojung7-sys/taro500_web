@@ -603,6 +603,8 @@ function bindEvents() {
     bindEvents();
     await loadCards();
 
+    updateOpenAIUsageUI(); // ✅ 여기
+
     const summary = $("#summary");
     if (summary) {
       summary.classList.remove("empty");
