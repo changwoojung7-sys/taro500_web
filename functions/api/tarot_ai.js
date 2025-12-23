@@ -83,6 +83,7 @@ export async function onRequest({ request }) {
           JSON.stringify({
             error: "LIMIT_EXCEEDED",
             message: "오늘 OpenAI 타로 리딩은 3회까지 가능합니다.",
+            limit: 3
           }),
           { status: 429, headers: corsHeaders }
         );

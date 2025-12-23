@@ -64,18 +64,28 @@ function useLongMeaningEnabled() {
    OpenAI Usage (Local)
 ========================= */
 const OPENAI_LIMIT = 3;
-
-function getTodayKey() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `tarot_openai_usage_${y}${m}${day}`;
-}
+const OPENAI_KEY = "openai_usage_v1";
 
 function getOpenAIUsage() {
-  const key = getTodayKey();
-  return parseInt(localStorage.getItem(key) || "0", 10);
+  const raw = localStorage.getItem(OPENAI_KEY);
+  if (!raw) return { date: todayKey(), count: 0 };
+
+  const parsed = JSON.parse(raw);
+  if (parsed.date !== todayKey()) {
+    return { date: todayKey(), count: 0 };
+  }
+  return parsed;
+}
+
+function setOpenAIUsage(count) {
+  localStorage.setItem(
+    OPENAI_KEY,
+    JSON.stringify({ date: todayKey(), count })
+  );
+}
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
 function increaseOpenAIUsage() {
@@ -100,34 +110,30 @@ function getResetTimeText() {
   return `내일 ${hh}:${mm} 이후 초기화`;
 }
 
-function updateOpenAIUI() {
-  const remain = getRemainingCount();
-
+function updateOpenAIUsageUI() {
+  const note = document.getElementById("openaiUsageNote");
   const openaiRadio = document.querySelector('input[value="openai"]');
-  const openaiLabel = openaiRadio?.closest(".radio");
+  if (!note || !openaiRadio) return;
 
-  const note = document.querySelector("#openaiUsageNote");
+  const usage = getOpenAIUsage();
+  const remain = OPENAI_LIMIT - usage.count;
 
-  if (!openaiRadio || !openaiLabel) return;
-
-  if (remain <= 0) {
-    openaiRadio.disabled = true;
-    openaiLabel.classList.add("disabled");
-
-    if (note) {
-      note.textContent = `오늘 OpenAI 타로는 모두 사용했습니다 🌙 (${getResetTimeText()})`;
-      note.classList.remove("hidden");
-    }
-  } else {
+  if (remain > 0) {
+    note.classList.remove("hidden", "warn");
+    note.innerHTML = `🌙 OpenAI 타로 리딩: <b>${usage.count}/${OPENAI_LIMIT}</b> 사용됨 (오늘 ${remain}회 남음)`;
     openaiRadio.disabled = false;
-    openaiLabel.classList.remove("disabled");
+  } else {
+    note.classList.remove("hidden");
+    note.classList.add("warn");
+    note.innerHTML = `🌙 오늘 OpenAI 타로 리딩은 모두 사용하셨어요.<br>내일 00:00 이후 다시 이용할 수 있어요.`;
 
-    if (note) {
-      note.textContent = `OpenAI 타로 남은 횟수: ${remain} / ${OPENAI_LIMIT}`;
-      note.classList.remove("hidden");
-    }
+    // 👉 강제 로컬 전환
+    openaiRadio.checked = false;
+    document.querySelector('input[value="local"]').checked = true;
+    openaiRadio.disabled = true;
   }
 }
+
 
 function showLimitMessage(msg) {
   const summary = document.querySelector("#summary");
@@ -148,7 +154,6 @@ function disableOpenAIOption() {
     openaiRadio.disabled = true;
   }
 }
-
 
 function getTomorrowResetTime() {
   const d = new Date();
@@ -574,25 +579,30 @@ async function runOpenAIReadingIfNeeded() {
       }),
     });
 
+    if (res.status === 429) {
+      const usage = getOpenAIUsage();
+      setOpenAIUsage(OPENAI_LIMIT); // 즉시 한도 소진 처리
+      updateOpenAIUsageUI();
+
+      return {
+        fallback: true,
+        message: "오늘 OpenAI 타로 리딩은 3회까지만 가능합니다 🌙"
+      };
+    }
+
     if (!res.ok) {
-      if (res.status === 429) {
-        const data = await res.json().catch(() => null);
-
-        // 서버 메시지를 그대로 사용자에게 표시
-        showLimitMessage(
-          data?.message || "오늘 OpenAI 타로 리딩은 3회까지 가능합니다."
-        );
-
-        disableOpenAIOption();
-        updateOpenAIUI();   // 🔑 남은 횟수 UI 갱신
-        return;
-      }
-
-      const text = await res.text().catch(() => "");
-      throw new Error(`AI 호출 실패: ${res.status} ${text}`);
+      throw new Error(`AI 호출 실패: ${res.status}`);
     }
 
     const aiResult = await res.json();
+
+    // 성공 시 카운트 증가
+    const usage = getOpenAIUsage();
+    setOpenAIUsage(usage.count + 1);
+    updateOpenAIUsageUI();
+
+    return aiResult;
+
 
     /* ✅ 1️⃣ 여기서 AI 결과를 lastDraw에 저장 */
     lastDraw.ai = {
@@ -680,4 +690,7 @@ function bindEvents() {
         "오류: " + (e?.message || e);
     }
   }
+
+  updateOpenAIUsageUI();
+
 })();
