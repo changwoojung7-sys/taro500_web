@@ -60,6 +60,76 @@ function useLongMeaningEnabled() {
   return el ? !!el.checked : true;
 }
 
+/* =========================
+   OpenAI Usage (Local)
+========================= */
+const OPENAI_LIMIT = 3;
+
+function getTodayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `tarot_openai_usage_${y}${m}${day}`;
+}
+
+function getOpenAIUsage() {
+  const key = getTodayKey();
+  return parseInt(localStorage.getItem(key) || "0", 10);
+}
+
+function increaseOpenAIUsage() {
+  const key = getTodayKey();
+  const next = getOpenAIUsage() + 1;
+  localStorage.setItem(key, String(next));
+  updateOpenAIUI();
+}
+
+function getRemainingCount() {
+  return Math.max(0, OPENAI_LIMIT - getOpenAIUsage());
+}
+
+function getResetTimeText() {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  const hh = String(tomorrow.getHours()).padStart(2, "0");
+  const mm = String(tomorrow.getMinutes()).padStart(2, "0");
+  return `내일 ${hh}:${mm} 이후 초기화`;
+}
+
+function updateOpenAIUI() {
+  const remain = getRemainingCount();
+
+  const openaiRadio = document.querySelector('input[value="openai"]');
+  const openaiLabel = openaiRadio?.closest(".radio");
+
+  const note = document.querySelector("#openaiUsageNote");
+
+  if (!openaiRadio || !openaiLabel) return;
+
+  if (remain <= 0) {
+    openaiRadio.disabled = true;
+    openaiLabel.classList.add("disabled");
+
+    if (note) {
+      note.textContent = `오늘 OpenAI 타로는 모두 사용했습니다 🌙 (${getResetTimeText()})`;
+      note.classList.remove("hidden");
+    }
+  } else {
+    openaiRadio.disabled = false;
+    openaiLabel.classList.remove("disabled");
+
+    if (note) {
+      note.textContent = `OpenAI 타로 남은 횟수: ${remain} / ${OPENAI_LIMIT}`;
+      note.classList.remove("hidden");
+    }
+  }
+}
+
+
 /* ------------------------
    Load cards.json
 ------------------------- */
@@ -475,6 +545,9 @@ async function runOpenAIReadingIfNeeded() {
       // 🔒 하루 3회 제한
       if (res.status === 429) {
         alert("오늘은 OpenAI 타로 리딩을 모두 사용하셨어요 🌙\n내일 다시 찾아주세요.");
+        // ✅ UI 즉시 반영
+        updateOpenAIUI();
+
         return; // 여기서 종료 → 로컬 해설로 넘어가거나 그냥 멈춤
       }
 
@@ -496,6 +569,9 @@ async function runOpenAIReadingIfNeeded() {
     if (summaryEl) {
       summaryEl.textContent = buildRichSummary(lastDraw);
     }
+
+    // AI 결과 정상 수신 후
+    increaseOpenAIUsage();
 
   } catch (e) {
     console.error(e);
