@@ -579,17 +579,24 @@ async function runOpenAIReadingIfNeeded() {
       }),
     });
 
+    // 🔥 여기부터
     if (res.status === 429) {
-      const usage = getOpenAIUsage();
-      setOpenAIUsage(OPENAI_LIMIT); // 즉시 한도 소진 처리
-      updateOpenAIUsageUI();
+      const data = await res.json().catch(() => ({}));
 
+      // UI 제어
+      forceDisableOpenAI();       // OpenAI 버튼 비활성
+      updateOpenAIUsageUI();      // 횟수 표시 갱신
+
+      // 사용자에게 보여줄 정상 결과
       return {
         fallback: true,
-        message: "오늘 OpenAI 타로 리딩은 3회까지만 가능합니다 🌙"
+        message:
+          data.message ||
+          "오늘 OpenAI 타로 리딩은 3회까지만 가능합니다 🌙"
       };
     }
 
+    // ❗ 다른 에러만 진짜 에러
     if (!res.ok) {
       throw new Error(`AI 호출 실패: ${res.status}`);
     }
@@ -621,13 +628,17 @@ async function runOpenAIReadingIfNeeded() {
     increaseOpenAIUsage();
 
   } catch (e) {
-    console.error(e);
-    if (summaryEl) {
-      summaryEl.textContent =
-        baseSummaryText +
-        "\n\n(OpenAI 리딩 실패. 로컬 해설로 표시됩니다.)\n" +
-        "오류: " + (e?.message || e);
+    if (e.message?.includes("429")) {
+      // 이미 위에서 UX 처리됨 → 조용히 로컬 사용
+      summary.textContent +=
+        "\n\n(OpenAI 리딩은 오늘 사용 횟수를 모두 사용했습니다.)";
+      return;
     }
+
+    // 진짜 에러만 표시
+    summary.textContent +=
+      "\n\n(OpenAI 리딩 오류)\n" + e.message;
+
   } finally {
     aiLoading = false;
     if (loadingEl) loadingEl.classList.add("hidden");
