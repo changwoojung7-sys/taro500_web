@@ -843,6 +843,15 @@ body{
   100% { opacity: 0.25; }
 }
 
+.openai-usage {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #aab;
+}
+.openai-usage.warn {
+  color: #ff8c8c;
+}
+
 
 /* ================= FOOTER ================= */
 .footer{

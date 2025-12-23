@@ -535,102 +535,98 @@ function topN(arr, n) {
 ------------------------- */
 async function runOpenAIReadingIfNeeded() {
   if (!lastDraw || aiLoading || lastDraw.ai) return;
+
+  const mode = document.querySelector('input[name="mode"]:checked')?.value;
+  if (mode !== "openai") return;
+
   aiLoading = true;
 
   const summaryEl = document.getElementById("summary");
   const loadingEl = document.getElementById("aiLoading");
 
+  // 🔹 AI 없이 만든 “로컬 요약” (프롬프트로도 사용)
   const baseSummaryText = buildRichSummary({ ...lastDraw, ai: null });
 
   try {
-    // 🔮 AI 로딩 표시
+    // 로딩 UI
     if (loadingEl) loadingEl.classList.remove("hidden");
     if (summaryEl) {
       summaryEl.textContent = baseSummaryText + "\n\n(OpenAI 리딩 중...)";
     }
 
+    const payload = {
+      mode: "openai",
+      spread: lastDraw.spread,
+      summaryText: baseSummaryText,
+      cards: lastDraw.cards.map((c, i) => ({
+        index: i,
+        name_kr: c.name_kr,
+        name_en: c.name_en,
+        position_label: c.position_label,
+        is_reversed: !!c.is_reversed,
+      })),
+    };
+
     const res = await fetch("/api/tarot_ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mode: "openai",
-        spread: lastDraw.spread,
-        summaryText: baseSummaryText,
-        cards: lastDraw.cards.map((c, i) => ({
-          index: i,
-          name_kr: c.name_kr,
-          name_en: c.name_en,
-          position_label: c.position_label,
-          is_reversed: c.is_reversed,
-        })),
-      }),
+      body: JSON.stringify(payload),
     });
 
-    const res = await fetch("/api/tarot_ai", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
+    const result = await res.json().catch(() => ({}));
 
-const result = await res.json();
+    /* ===============================
+       ✅ 429: 사용 제한 (정상 흐름)
+    =============================== */
+    if (res.status === 429 && result.code === "LIMIT_EXCEEDED") {
+      if (summaryEl) {
+        summaryEl.textContent =
+          baseSummaryText +
+          "\n\n🌙 " + (result.message || "오늘 OpenAI 타로 리딩은 3회까지만 가능합니다.") +
+          "\n⏰ 내일 00:00 이후 다시 이용할 수 있어요.";
+      }
 
-/* ====== 🔴 429는 정상 흐름 ====== */
-if (res.status === 429 && result.code === "LIMIT_EXCEEDED") {
-  // 메시지 출력
-  summary.textContent =
-    "🌙 " + result.message + "\n\n" +
-    "현재는 로컬 해설로 안내됩니다.\n" +
-    "⏰ 내일 00:00 이후 다시 이용 가능해요.";
+      // OpenAI 옵션 비활성화 + 로컬 강제
+      const openaiRadio = document.querySelector('input[value="openai"]');
+      const localRadio = document.querySelector('input[value="local"]');
+      if (openaiRadio) openaiRadio.disabled = true;
+      if (localRadio) localRadio.checked = true;
 
-  // OpenAI 옵션 즉시 비활성화
-  document.querySelector('input[value="openai"]').disabled = true;
-  document.querySelector('input[value="local"]').checked = true;
+      updateOpenAIUsageUI(result.limit, result.limit);
 
-  return; // ❗ 여기서 종료 (에러 아님)
-}
+      return; // ❗ 에러 아님
+    }
 
-/* ====== 진짜 에러만 처리 ====== */
-if (!res.ok) {
-  summary.textContent = "AI 서버 오류가 발생했습니다.";
-  return;
-}
+    /* ===============================
+       ❌ 진짜 서버 오류
+    =============================== */
+    if (!res.ok || !result.ok) {
+      if (summaryEl) {
+        summaryEl.textContent =
+          baseSummaryText +
+          "\n\n(OpenAI 서버 오류로 로컬 해설이 유지됩니다.)";
+      }
+      return;
+    }
 
-/* ====== 성공 ====== */
-lastDraw.ai = result.data;
-updateOpenAIUsageUI(result.usage, result.limit);
+    /* ===============================
+       ✅ 성공
+    =============================== */
+    lastDraw.ai = result.data || null;
 
-summary.textContent = buildRichSummary(lastDraw);
+    updateOpenAIUsageUI(result.usage || 0, result.limit || 3);
 
-
-
-    /* ✅ 1️⃣ 여기서 AI 결과를 lastDraw에 저장 */
-    lastDraw.ai = {
-      card_comments: aiResult.card_comments || [],
-      overall_comment: aiResult.overall_comment
-        || (aiResult.result ? { summary: aiResult.result } : {}),
-      result: aiResult.result || "",
-    };
-
-    /* ✅ 2️⃣ 그리고 “이 줄 하나”로 화면을 다시 그림 */
     if (summaryEl) {
       summaryEl.textContent = buildRichSummary(lastDraw);
     }
 
-    // AI 결과 정상 수신 후
-    increaseOpenAIUsage();
-
-  } catch (e) {
-    if (e.message?.includes("429")) {
-      // 이미 위에서 UX 처리됨 → 조용히 로컬 사용
-      summary.textContent +=
-        "\n\n(OpenAI 리딩은 오늘 사용 횟수를 모두 사용했습니다.)";
-      return;
+  } catch (err) {
+    // ❌ 네트워크 등 예외 상황만 여기로
+    if (summaryEl) {
+      summaryEl.textContent =
+        baseSummaryText +
+        "\n\n(OpenAI 연결 오류로 로컬 해설이 유지됩니다.)";
     }
-
-    // 진짜 에러만 표시
-    summary.textContent +=
-      "\n\n(OpenAI 리딩 오류)\n" + e.message;
-
   } finally {
     aiLoading = false;
     if (loadingEl) loadingEl.classList.add("hidden");
