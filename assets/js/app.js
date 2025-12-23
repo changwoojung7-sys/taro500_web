@@ -472,7 +472,14 @@ async function runOpenAIReadingIfNeeded() {
     });
 
     if (!res.ok) {
-      throw new Error(`AI 호출 실패: ${res.status}`);
+      // 🔒 하루 3회 제한
+      if (res.status === 429) {
+        alert("오늘은 OpenAI 타로 리딩을 모두 사용하셨어요 🌙\n내일 다시 찾아주세요.");
+        return; // 여기서 종료 → 로컬 해설로 넘어가거나 그냥 멈춤
+      }
+
+      const t = await res.text().catch(() => "");
+      throw new Error(`AI 호출 실패: ${res.status} ${t}`);
     }
 
     const aiResult = await res.json();
