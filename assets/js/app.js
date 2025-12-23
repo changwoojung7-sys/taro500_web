@@ -129,6 +129,38 @@ function updateOpenAIUI() {
   }
 }
 
+function showLimitMessage() {
+  const summary = document.querySelector("#summary");
+  if (!summary) return;
+
+  const resetTime = getTomorrowResetTime();
+
+  summary.textContent =
+    `🌙 오늘 OpenAI 타로 리딩은 3회까지 가능합니다.\n` +
+    `다음 이용 가능 시간: ${resetTime}\n\n` +
+    `지금은 로컬 해설로 안내드릴게요.`;
+}
+
+function disableOpenAIOption() {
+  const openaiRadio = document.querySelector('input[value="openai"]');
+  if (openaiRadio) {
+    openaiRadio.checked = false;
+    openaiRadio.disabled = true;
+  }
+}
+
+function getTomorrowResetTime() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(0, 0, 0, 0);
+  return d.toLocaleString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+}
+
+
 
 /* ------------------------
    Load cards.json
@@ -542,17 +574,19 @@ async function runOpenAIReadingIfNeeded() {
     });
 
     if (!res.ok) {
-      // 🔒 하루 3회 제한
       if (res.status === 429) {
-        alert("오늘은 OpenAI 타로 리딩을 모두 사용하셨어요 🌙\n내일 다시 찾아주세요.");
-        // ✅ UI 즉시 반영
-        updateOpenAIUI();
+        // ✅ 사용자에게 정확한 제한 메시지 표시
+        showLimitMessage();
 
-        return; // 여기서 종료 → 로컬 해설로 넘어가거나 그냥 멈춤
+        // ✅ OpenAI 버튼 비활성화
+        disableOpenAIOption();
+
+        // ✅ 로컬 해설로 자연스럽게 fallback
+        return;
       }
 
-      const t = await res.text().catch(() => "");
-      throw new Error(`AI 호출 실패: ${res.status} ${t}`);
+      // 그 외 진짜 오류만 에러 처리
+      throw new Error(`AI 호출 실패: ${res.status}`);
     }
 
     const aiResult = await res.json();
