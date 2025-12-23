@@ -110,6 +110,31 @@ function getResetTimeText() {
   return `내일 ${hh}:${mm} 이후 초기화`;
 }
 
+function updateOpenAIUsageUI() {
+  const note = document.getElementById("openaiUsageNote");
+  const openaiRadio = document.querySelector('input[value="openai"]');
+  if (!note || !openaiRadio) return;
+
+  const usage = getOpenAIUsage();
+  const remain = OPENAI_LIMIT - usage.count;
+
+  if (remain > 0) {
+    note.classList.remove("hidden", "warn");
+    note.innerHTML = `🌙 OpenAI 타로 리딩: <b>${usage.count}/${OPENAI_LIMIT}</b> 사용됨 (오늘 ${remain}회 남음)`;
+    openaiRadio.disabled = false;
+  } else {
+    note.classList.remove("hidden");
+    note.classList.add("warn");
+    note.innerHTML = `🌙 오늘 OpenAI 타로 리딩은 모두 사용하셨어요.<br>내일 00:00 이후 다시 이용할 수 있어요.`;
+
+    // 👉 강제 로컬 전환
+    openaiRadio.checked = false;
+    document.querySelector('input[value="local"]').checked = true;
+    openaiRadio.disabled = true;
+  }
+}
+
+
 function showLimitMessage(msg) {
   const summary = document.querySelector("#summary");
   if (!summary) return;
@@ -141,18 +166,6 @@ function getTomorrowResetTime() {
   });
 }
 
-function updateOpenAIUsageUI(used = 0, limit = 3) {
-  const el = document.getElementById("openaiUsageNote");
-  if (!el) return;
-
-  if (used < limit) {
-    el.textContent = `OpenAI 사용 ${used}/${limit}`;
-    el.classList.remove("warn");
-  } else {
-    el.textContent = "오늘 OpenAI 사용 완료";
-    el.classList.add("warn");
-  }
-}
 
 
 /* ------------------------
@@ -566,41 +579,36 @@ async function runOpenAIReadingIfNeeded() {
       }),
     });
 
-    const res = await fetch("/api/tarot_ai", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
+    // 🔥 여기부터
+    if (res.status === 429) {
+      const data = await res.json().catch(() => ({}));
 
-const result = await res.json();
+      // UI 제어
+      forceDisableOpenAI();       // OpenAI 버튼 비활성
+      updateOpenAIUsageUI();      // 횟수 표시 갱신
 
-/* ====== 🔴 429는 정상 흐름 ====== */
-if (res.status === 429 && result.code === "LIMIT_EXCEEDED") {
-  // 메시지 출력
-  summary.textContent =
-    "🌙 " + result.message + "\n\n" +
-    "현재는 로컬 해설로 안내됩니다.\n" +
-    "⏰ 내일 00:00 이후 다시 이용 가능해요.";
+      // 사용자에게 보여줄 정상 결과
+      return {
+        fallback: true,
+        message:
+          data.message ||
+          "오늘 OpenAI 타로 리딩은 3회까지만 가능합니다 🌙"
+      };
+    }
 
-  // OpenAI 옵션 즉시 비활성화
-  document.querySelector('input[value="openai"]').disabled = true;
-  document.querySelector('input[value="local"]').checked = true;
+    // ❗ 다른 에러만 진짜 에러
+    if (!res.ok) {
+      throw new Error(`AI 호출 실패: ${res.status}`);
+    }
 
-  return; // ❗ 여기서 종료 (에러 아님)
-}
+    const aiResult = await res.json();
 
-/* ====== 진짜 에러만 처리 ====== */
-if (!res.ok) {
-  summary.textContent = "AI 서버 오류가 발생했습니다.";
-  return;
-}
+    // 성공 시 카운트 증가
+    const usage = getOpenAIUsage();
+    setOpenAIUsage(usage.count + 1);
+    updateOpenAIUsageUI();
 
-/* ====== 성공 ====== */
-lastDraw.ai = result.data;
-updateOpenAIUsageUI(result.usage, result.limit);
-
-summary.textContent = buildRichSummary(lastDraw);
-
+    return aiResult;
 
 
     /* ✅ 1️⃣ 여기서 AI 결과를 lastDraw에 저장 */
@@ -637,7 +645,8 @@ summary.textContent = buildRichSummary(lastDraw);
   }
 }
 
-/*------------------------
+
+/* ------------------------
    Clear
 ------------------------- */
 function clearAll() {
@@ -693,7 +702,6 @@ function bindEvents() {
     }
   }
 
-
-
+  updateOpenAIUsageUI();
 
 })();
